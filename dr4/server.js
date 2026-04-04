@@ -50,5 +50,5 @@ app.get('/photos/:filename', (req, res) => {
   }
 });
 
-const PORT = 5001;
+const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => console.log(`DR4 server running on port ${PORT}`));
