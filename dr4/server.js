@@ -7,10 +7,8 @@ const fs = require('fs');
 const app = express();
 const uploadDir = 'uploads';
 
-// Създава папката, ако не съществува
 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir);
 
-// Конфигурация на multer – запазване на диска
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, uploadDir),
   filename: (req, file, cb) => {
@@ -32,7 +30,6 @@ const upload = multer({
   }
 });
 
-// Ендпойнт за качване
 app.post('/upload', upload.single('photo'), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: 'No file uploaded' });
@@ -44,7 +41,6 @@ app.post('/upload', upload.single('photo'), (req, res) => {
   });
 });
 
-// Ендпойнт за изтегляне на снимка
 app.get('/photos/:filename', (req, res) => {
   const filePath = path.join(uploadDir, req.params.filename);
   if (fs.existsSync(filePath)) {
