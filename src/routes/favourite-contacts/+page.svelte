@@ -8,7 +8,7 @@
 
 <LogoutButton />
 
-<h1>Моите контакти</h1>
+<h1>Моите любими контакти</h1>
 <Contacts contacts={data.contacts} />
 
 <div>

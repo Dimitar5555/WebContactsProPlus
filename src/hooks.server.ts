@@ -1,25 +1,29 @@
 import jwt from 'jsonwebtoken';
 import { JWT_SECRET } from '$env/static/private';
+import { redirect } from '@sveltejs/kit';
 
-export async function handle({ event, resolve }) {
-    const token = event.cookies.get('token');
-
-    if (token) {
+export const handle: Handle = async ({ event, resolve, reject }) => {
+    const pathname = event.url.pathname;
+    const publicPaths = ['/login', '/register', '/about', '/favicon.ico'];
+    const isPublic = publicPaths.includes(pathname);
+    if(isPublic) {
+        console.log('Public path accessed:', pathname);
+    }
+    else if(!event.locals.user) {
+        console.log('Protected path accessed:', pathname);
+        const token = event.cookies.get('token');
+        if(!token) {
+            event.locals.user = null;
+            return new Response('Redirecting', {status: 303, headers: { Location: '/login' }});
+        }
         try {
-            const user = jwt.verify(token, JWT_SECRET);
-            
-            event.locals.user = {
-                id: user.id,
-                role: user.role
-            };
+            const decoded = jwt.verify(token, JWT_SECRET);
+            event.locals.user = decoded;
         } 
         catch (err) {
             event.locals.user = null;
+            return new Response('Redirecting', {status: 303, headers: { Location: '/login' }});
         }
-    } 
-    else {
-        event.locals.user = null;
     }
-
     return await resolve(event);
 }
