@@ -28,6 +28,10 @@
                 errorMessage = data.message || 'Регистрацията не беше успешна. Моля, опитайте отново.';
                 successMessage = '';
             }
+        })
+        .catch(error => {
+            errorMessage = 'Възникна грешка при регистрацията. Моля, опитайте отново. Грешка: ' + error.message;
+            successMessage = '';
         });
     }
 </script>

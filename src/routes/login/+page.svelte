@@ -48,6 +48,10 @@
                 errorMessage = data.message || 'Влизането не беше успешно. Моля, опитайте отново.';
                 successMessage = '';
             }
+        })
+        .catch(error => {
+            errorMessage = 'Възникна грешка при влизането. Моля, опитайте отново. Грешка: ' + error.message;
+            successMessage = '';
         });
     }
 </script>
