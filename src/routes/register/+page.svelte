@@ -1,4 +1,5 @@
 <script lang="ts">
+    import ExternalNavigation from "$lib/components/ExternalNavigation.svelte";
     import MessageBox from "$lib/components/MessageBox.svelte";
 
     let email: string = $state('');    
@@ -30,6 +31,8 @@
         });
     }
 </script>
+
+<ExternalNavigation />
 
 <form>
     <MessageBox successMessage={successMessage} errorMessage={errorMessage} />

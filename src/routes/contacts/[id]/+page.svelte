@@ -1,9 +1,12 @@
 <script lang="ts">
+    import InternalNavigation from '$lib/components/InternalNavigation.svelte';
     import LogoutButton from '$lib/components/LogoutButton.svelte';
 import type { PageProps } from './$types';
 
     let { data }: PageProps = $props();
 </script>
+
+<InternalNavigation />
 
 <LogoutButton />
 
