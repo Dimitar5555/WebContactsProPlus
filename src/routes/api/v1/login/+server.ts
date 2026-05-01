@@ -1,4 +1,4 @@
-import { redirect, type Cookies } from '@sveltejs/kit';
+import { type Cookies } from '@sveltejs/kit';
 import { database } from '$lib/database';
 import jwt from 'jsonwebtoken';
 import { JWT_SECRET } from '$env/static/private';
