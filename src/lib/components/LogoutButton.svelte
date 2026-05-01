@@ -1,7 +1,9 @@
 <script>
     import { page } from '$app/state';
-    function logout() {
-        document.cookie = 'token=; Max-Age=0; path=/';
+    async function logout() {
+        await fetch('/api/v1/logout', {
+            method: 'GET'
+        });
         window.location.href = '/login';
     }
     let username = $derived(page.data.username);
