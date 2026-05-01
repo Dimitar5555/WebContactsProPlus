@@ -4,7 +4,7 @@ import { redirect } from '@sveltejs/kit';
 
 export const handle: Handle = async ({ event, resolve, reject }) => {
     const pathname = event.url.pathname;
-    const publicPaths = ['/login', '/register', '/about', '/favicon.ico'];
+    const publicPaths = ['/login', '/register', '/about', '/favicon.ico', '/api/v1/login', '/api/v1/register'];
     const isPublic = publicPaths.includes(pathname);
     if(isPublic) {
         console.log('Public path accessed:', pathname);
