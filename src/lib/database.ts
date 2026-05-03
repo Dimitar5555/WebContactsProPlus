@@ -30,27 +30,27 @@ db.exec(`
 const userCount = db.prepare('SELECT COUNT(*) as count FROM users').get() as { count: number };
 
 if (userCount.count === 0) {
-    const insertUser = db.prepare('INSERT INTO users (id, username, password, email) VALUES (?, ?, ?, ?)');
-    insertUser.run(1, 'user1', 'password1', 'user1@example.com');
-    insertUser.run(2, 'user2', 'password2', 'user2@example.com');
+    const insertUser = db.prepare('INSERT INTO users (username, password, email) VALUES (?, ?, ?)');
+    insertUser.run('user1', 'password1', 'user1@example.com');
+    insertUser.run('user2', 'password2', 'user2@example.com');
 
-    const insertContact = db.prepare('INSERT INTO contacts (id, user_id, first_name, last_name, is_favourite, notes) VALUES (?, ?, ?, ?, ?, ?)');
-    insertContact.run(1, 1, 'Иван', 'Петров', 1, null);
-    insertContact.run(2, 1, 'Мария', 'Георгиева', 1, 'Нуждае се от специално внимание при избора на подарък');
-    insertContact.run(3, 1, 'Георги', 'Тричков', 1, null);
-    insertContact.run(4, 1, 'Анна', 'Димитрова', 0, null);
-    insertContact.run(5, 2, 'Петър', 'Иванов', 0, null);
+    const insertContact = db.prepare('INSERT INTO contacts (user_id, first_name, last_name, is_favourite, notes) VALUES (?, ?, ?, ?, ?)');
+    insertContact.run(1, 'Иван', 'Петров', 1, null);
+    insertContact.run(1, 'Мария', 'Георгиева', 1, 'Нуждае се от специално внимание при избора на подарък');
+    insertContact.run(1, 'Георги', 'Тричков', 1, null);
+    insertContact.run(1, 'Анна', 'Димитрова', 0, null);
+    insertContact.run(2, 'Петър', 'Иванов', 0, null);
 
-    const insertPhone = db.prepare('INSERT INTO phone_numbers (id, contact_id, phone_number, label) VALUES (?, ?, ?, ?)');
-    insertPhone.run(1, 1, '123-456-7890', null);
-    insertPhone.run(2, 1, '234-567-8901', 'WORK');
-    insertPhone.run(3, 1, '345-678-9012', 'MOBILE');
-    insertPhone.run(4, 1, '456-789-0123', null);
-    insertPhone.run(5, 2, '567-890-1234', 'HOME');
-    insertPhone.run(6, 3, '678-901-2345', null);
-    insertPhone.run(7, 3, '789-012-3456', 'MOBILE');
-    insertPhone.run(8, 4, '890-123-4567', null);
-    insertPhone.run(9, 5, '901-234-5678', 'WORK');
+    const insertPhone = db.prepare('INSERT INTO phone_numbers (contact_id, phone_number, label) VALUES (?, ?, ?)');
+    insertPhone.run(1, '123-456-7890', null);
+    insertPhone.run(1, '234-567-8901', 'WORK');
+    insertPhone.run(1, '345-678-9012', 'MOBILE');
+    insertPhone.run(1, '456-789-0123', null);
+    insertPhone.run(2, '567-890-1234', 'HOME');
+    insertPhone.run(3, '678-901-2345', null);
+    insertPhone.run(3, '789-012-3456', 'MOBILE');
+    insertPhone.run(4, '890-123-4567', null);
+    insertPhone.run(5, '901-234-5678', 'WORK');
 }
 
 export type QueryParams<T> = {
