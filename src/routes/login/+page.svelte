@@ -42,7 +42,7 @@
                 errorMessage = '';
                 setTimeout(() => {
                     window.location.href = '/contacts';
-                }, 2500);
+                }, 1000);
             }
             else {
                 errorMessage = data.message || 'Влизането не беше успешно. Моля, опитайте отново.';
