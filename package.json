@@ -25,6 +25,8 @@
 	},
 	"dependencies": {
 		"better-sqlite3": "^12.9.0",
+		"bootstrap": "^5.3.8",
+		"bootstrap-icons": "^1.13.1",
 		"jsonwebtoken": "^9.0.3",
 		"uuid": "^14.0.0"
 	}
