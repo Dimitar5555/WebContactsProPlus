@@ -8,8 +8,8 @@
 </script>
 
 <InternalNavigation />
-
 <LogoutButton />
+<button on:click={() => window.location.href = '/contacts/new'}>Добави контакт</button>
 
 <h1>Моите контакти</h1>
 <Contacts contacts={data.contacts} />

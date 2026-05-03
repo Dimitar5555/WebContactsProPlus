@@ -1,9 +1,35 @@
 <script lang="ts">
     import InternalNavigation from '$lib/components/InternalNavigation.svelte';
     import LogoutButton from '$lib/components/LogoutButton.svelte';
-import type { PageProps } from './$types';
+    import MessageBox from '$lib/components/MessageBox.svelte';
+    import type { PageProps } from './$types';
+
+    let successMessage = $state('');
+    let errorMessage = $state('');
 
     let { data }: PageProps = $props();
+
+    function deleteContact() {
+        if (confirm('Сигурни ли сте, че искате да изтриете този контакт?')) {
+            fetch(`/api/v1/contacts/${data.contact.id}`, {
+                method: 'DELETE'
+            })
+            .then(response => {
+                if(response.ok) {
+                    successMessage = 'Контактът беше успешно изтрит.';
+                    window.setTimeout(() => {
+                        window.location.href = '/contacts';
+                    }, 2000);
+                }
+                else {
+                    errorMessage = 'Възникна грешка при изтриването на контакта.';
+                }
+            })
+            .catch(() => {
+                errorMessage = 'Възникна грешка при изтриването на контакта.';
+            });
+        }
+    }
 </script>
 
 <InternalNavigation />
@@ -14,16 +40,20 @@ import type { PageProps } from './$types';
 {#if !data.contact}
     <p>Контактът не е намерен.</p>
 {:else}
-    <h2>{data.contact.first_name} {data.contact.last_name}</h2>
+    {@const contact = data.contact}
+    <button on:click={() => window.location.href = `/contacts/${data.contact.id}/edit`}>Редактирай</button>
+    <button on:click={deleteContact}>Изтрий</button>
+    <MessageBox successMessage={successMessage} errorMessage={errorMessage} />
+    <h2>{contact.first_name} {contact.last_name}</h2>
     <ul>
         {#each data.phone_numbers as phone}
             <li>{phone.phone_number} {phone.label ? `(${phone.label})` : ''}</li>
         {/each}
     </ul>
-    {#if data.contact.is_favourite}
+    {#if contact.is_favourite}
         <p>Този контакт е в любими.</p>
     {/if}
-    {#if data.contact.notes}
-        <p>Бележки: {data.contact.notes}</p>
+    {#if contact.notes}
+        <p>Бележки: {contact.notes}</p>
     {/if}
 {/if}
