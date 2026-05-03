@@ -37,7 +37,7 @@ export async function POST({ request, locals }) {
 
         const phoneNumbers = body.phone_numbers || [];
         for (const item of phoneNumbers) {
-            if (item.phone_number && item.label) {
+            if (item.phone_number) {
                 const { phone_number, label } = item;
                 await database.phoneNumbers.create({
                     contact_id: newContactId,
