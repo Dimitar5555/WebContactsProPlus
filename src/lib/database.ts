@@ -23,7 +23,8 @@ db.exec(`
         contact_id INTEGER NOT NULL,
         phone_number TEXT NOT NULL,
         label TEXT,
-        FOREIGN KEY(contact_id) REFERENCES contacts(id) ON DELETE CASCADE
+        FOREIGN KEY(contact_id) REFERENCES contacts(id) ON DELETE CASCADE,
+        CHECK(label IN ('HOME', 'WORK', 'MOBILE') OR label IS NULL)
     );
 `);
 
