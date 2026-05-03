@@ -1,68 +1,167 @@
-// import { DB_URL } from '$env/static/private';
+import Database from 'better-sqlite3';
+const db = new Database('app.db');
+db.exec(`
+    CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT UNIQUE NOT NULL,
+        password TEXT NOT NULL,
+        email TEXT UNIQUE NOT NULL
+    );
 
-const users: User[] = [
-    { id: 1, username: 'user1', password: 'password1', email: 'user1@example.com' },
-    { id: 2, username: 'user2', password: 'password2', email: 'user2@example.com' },
-];
+    CREATE TABLE IF NOT EXISTS contacts (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        first_name TEXT NOT NULL,
+        last_name TEXT NOT NULL,
+        is_favourite INTEGER DEFAULT 0,
+        notes TEXT,
+        FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+    );
 
-const contacts: Contact[] = [
-    { id: 1, user_id: 1, first_name: 'Иван', last_name: 'Петров', is_favourite: true },
-    { id: 2, user_id: 1, first_name: 'Мария', last_name: 'Георгиева', is_favourite: true, notes: 'Нуждае се от специално внимание при избора на подарък' },
-    { id: 3, user_id: 1, first_name: 'Георги', last_name: 'Тричков', is_favourite: true },
-    { id: 4, user_id: 1, first_name: 'Анна', last_name: 'Димитрова', is_favourite: false },
-    { id: 5, user_id: 2, first_name: 'Петър', last_name: 'Иванов', is_favourite: false },
-];
+    CREATE TABLE IF NOT EXISTS phone_numbers (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        contact_id INTEGER NOT NULL,
+        phone_number TEXT NOT NULL,
+        label TEXT,
+        FOREIGN KEY(contact_id) REFERENCES contacts(id) ON DELETE CASCADE
+    );
+`);
 
-const phonesNumbers: PhoneNumber[] = [
-    { id: 1, contact_id: 1, phone_number: '123-456-7890' },
-    { id: 2, contact_id: 1, phone_number: '234-567-8901', label: 'WORK' },
-    { id: 3, contact_id: 1, phone_number: '345-678-9012', label: 'MOBILE' },
-    { id: 4, contact_id: 1, phone_number: '456-789-0123' },
-    { id: 5, contact_id: 2, phone_number: '567-890-1234', label: 'HOME' },
-    { id: 6, contact_id: 3, phone_number: '678-901-2345' },
-    { id: 7, contact_id: 3, phone_number: '789-012-3456', label: 'MOBILE' },
-    { id: 8, contact_id: 4, phone_number: '890-123-4567' },
-    { id: 9, contact_id: 5, phone_number: '901-234-5678', label: 'WORK' },
-];
+const userCount = db.prepare('SELECT COUNT(*) as count FROM users').get() as { count: number };
 
-type QueryParams<T> = {
-    where: Partial<T>;
-    userId?: number; // Optional for public tables like 'users'
+if (userCount.count === 0) {
+    const insertUser = db.prepare('INSERT INTO users (id, username, password, email) VALUES (?, ?, ?, ?)');
+    insertUser.run(1, 'user1', 'password1', 'user1@example.com');
+    insertUser.run(2, 'user2', 'password2', 'user2@example.com');
+
+    const insertContact = db.prepare('INSERT INTO contacts (id, user_id, first_name, last_name, is_favourite, notes) VALUES (?, ?, ?, ?, ?, ?)');
+    insertContact.run(1, 1, 'Иван', 'Петров', 1, null);
+    insertContact.run(2, 1, 'Мария', 'Георгиева', 1, 'Нуждае се от специално внимание при избора на подарък');
+    insertContact.run(3, 1, 'Георги', 'Тричков', 1, null);
+    insertContact.run(4, 1, 'Анна', 'Димитрова', 0, null);
+    insertContact.run(5, 2, 'Петър', 'Иванов', 0, null);
+
+    const insertPhone = db.prepare('INSERT INTO phone_numbers (id, contact_id, phone_number, label) VALUES (?, ?, ?, ?)');
+    insertPhone.run(1, 1, '123-456-7890', null);
+    insertPhone.run(2, 1, '234-567-8901', 'WORK');
+    insertPhone.run(3, 1, '345-678-9012', 'MOBILE');
+    insertPhone.run(4, 1, '456-789-0123', null);
+    insertPhone.run(5, 2, '567-890-1234', 'HOME');
+    insertPhone.run(6, 3, '678-901-2345', null);
+    insertPhone.run(7, 3, '789-012-3456', 'MOBILE');
+    insertPhone.run(8, 4, '890-123-4567', null);
+    insertPhone.run(9, 5, '901-234-5678', 'WORK');
+}
+
+export type QueryParams<T> = {
+    where?: Partial<T>;
+    userId?: number;
+};
+
+// Helper function to map SQLite 1/0 back to true/false for TypeScript
+const mapContact = (row: any) /* : Contact */ => {
+    if (!row) return undefined;
+    return {
+        ...row,
+        is_favourite: Boolean(row.is_favourite)
+    };
 };
 
 export const database = {
     contacts: {
-        findMany: async ({ where, userId }: QueryParams<Contact>): Promise<Contact[]> => {
-            if(where?.is_favourite) {
-                return contacts.filter(contact => contact.is_favourite && contact.user_id === userId);
+        findMany: async ({ where, userId }: QueryParams<any>) /*: Promise<Contact[]> */ => {
+            let query = 'SELECT * FROM contacts WHERE user_id = ?';
+            const params: any[] = [userId];
+
+            if (where?.is_favourite !== undefined) {
+                query += ' AND is_favourite = ?';
+                params.push(where.is_favourite ? 1 : 0);
             }
-            return contacts.filter(contact => contact.user_id === userId);
+
+            const stmt = db.prepare(query);
+            const rows = stmt.all(...params);
+
+            return rows.map(mapContact);
         },
-        findById: async (id: number, userId: number): Promise<Contact | undefined> => {
-            const contact = contacts.find(contact => contact.id === id && contact.user_id === userId);
-            return contact;
+
+        findById: async (id: number, userId: number) /*: Promise<Contact | undefined> */ => {
+            const stmt = db.prepare('SELECT * FROM contacts WHERE id = ? AND user_id = ?');
+            const row = stmt.get(id, userId);
+
+            return mapContact(row);
+        },
+
+        create: async ({ user_id, first_name, last_name, is_favourite = false, notes = null }: any) /*: Promise<number> */ => {
+            const stmt = db.prepare('INSERT INTO contacts (user_id, first_name, last_name, is_favourite, notes) VALUES (?, ?, ?, ?, ?)');
+            const result = stmt.run(user_id, first_name, last_name, is_favourite ? 1 : 0, notes);
+            return result.lastInsertRowid as number; // Returns the ID of the new contact
+        },
+
+        update: async (id: number, userId: number, { first_name, last_name, is_favourite, notes }: any) /*: Promise<void> */ => {
+            const stmt = db.prepare(`
+                UPDATE contacts 
+                SET first_name = ?, last_name = ?, is_favourite = ?, notes = ? 
+                WHERE id = ? AND user_id = ?
+            `);
+            stmt.run(first_name, last_name, is_favourite ? 1 : 0, notes, id, userId);
+        },
+
+        delete: async (id: number, userId: number) /*: Promise<void> */ => {
+            // because of ON DELETE CASCADE, deleting a contacts automatically deletes all their phone numbers too!
+            const stmt = db.prepare('DELETE FROM contacts WHERE id = ? AND user_id = ?');
+            stmt.run(id, userId);
         }
     },
+
     phoneNumbers: {
-        findByContactId: async (contact_id: number): Promise<PhoneNumber[]> => {
-            return phonesNumbers.filter(phone => phone.contact_id === contact_id);
+        findByContactId: async (contact_id: number) /*: Promise<PhoneNumber[]> */ => {
+            const stmt = db.prepare('SELECT * FROM phone_numbers WHERE contact_id = ?');
+            return stmt.all(contact_id); // as PhoneNumber[]
+        },
+
+        create: async ({ contact_id, phone_number, label = null }: any) /*: Promise<number> */ => {
+            const stmt = db.prepare('INSERT INTO phone_numbers (contact_id, phone_number, label) VALUES (?, ?, ?)');
+            const result = stmt.run(contact_id, phone_number, label);
+            return result.lastInsertRowid as number;
+        },
+
+        update: async (id: number, { phone_number, label }: any) /*: Promise<void> */ => {
+            const stmt = db.prepare('UPDATE phone_numbers SET phone_number = ?, label = ? WHERE id = ?');
+            stmt.run(phone_number, label, id);
+        },
+
+        delete: async (id: number) /*: Promise<void> */ => {
+            const stmt = db.prepare('DELETE FROM phone_numbers WHERE id = ?');
+            stmt.run(id);
         }
     },
+
     users: {
-        findByUsername: async (username: string): Promise<User | undefined> => {
-            return users.find(user => user.username === username);
+        findByUsername: async (username: string) /*: Promise<User | undefined> */ => {
+            const stmt = db.prepare('SELECT * FROM users WHERE username = ?');
+            return stmt.get(username); // as User | undefined
         },
-        findByEmail: async (email: string): Promise<User | undefined> => {
-            return users.find(user => user.email === email);
+
+        findByEmail: async (email: string) /*: Promise<User | undefined> */ => {
+            const stmt = db.prepare('SELECT * FROM users WHERE email = ?');
+            return stmt.get(email); // as User | undefined
         },
-        create: async ({ username, password, email }: { username: string; password: string; email: string }): Promise<void> => {
-            const newUser: User = {
-                id: users.length + 1,
-                username,
-                password,
-                email
-            };
-            users.push(newUser);
+
+        create: async ({ username, password, email }: any) /*: Promise<number> */ => {
+            const stmt = db.prepare('INSERT INTO users (username, password, email) VALUES (?, ?, ?)');
+            const result = stmt.run(username, password, email);
+            return result.lastInsertRowid as number;
+        },
+
+        update: async (id: number, { username, password, email }: any) /*: Promise<void> */ => {
+            const stmt = db.prepare('UPDATE users SET username = ?, password = ?, email = ? WHERE id = ?');
+            stmt.run(username, password, email, id);
+        },
+
+        delete: async (id: number) /*: Promise<void> */ => {
+            // because of ON DELETE CASCADE, deleting a contacts automatically deletes all their phone numbers too!
+            const stmt = db.prepare('DELETE FROM users WHERE id = ?');
+            stmt.run(id);
         }
     }
 };
