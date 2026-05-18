@@ -38,28 +38,25 @@
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                successMessage = 'Успешно влизане! Пренасочване...';
-                errorMessage = '';
                 setTimeout(() => {
                     window.location.href = '/contacts';
                 }, 1000);
             }
-            else {
-                errorMessage = data.message || 'Влизането не беше успешно. Моля, опитайте отново.';
-                successMessage = '';
-            }
-        })
-        .catch(error => {
-            errorMessage = 'Възникна грешка при влизането. Моля, опитайте отново. Грешка: ' + error.message;
-            successMessage = '';
-        });
+        }
+        catch (error) {
+            message = 'Грешка при влизане. Моля, опитайте отново.';
+            messageType = 'error';
+        }
+    }
+
+    function clearMessages() {
+        message = null;
     }
 </script>
 
 <ExternalNavigation />
 
 <form>
-    <MessageBox successMessage={successMessage} errorMessage={errorMessage} />
     <label for="username">Потребител:</label>
     <input type="text" name="username" required bind:value={username}>
     <br>
@@ -69,4 +66,5 @@
     <button type="button" onclick={submitLoginForm}>Влез</button>
     <button type="button" onclick={() => loginAs('user1')}>Влез като user1</button>
     <button type="button" onclick={() => loginAs('user2')}>Влез като user2</button>
+        <MessageBox message={message} messageType={messageType} />
 </form>

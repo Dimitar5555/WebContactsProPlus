@@ -5,8 +5,8 @@
     let email: string = $state('');    
     let username: string = $state('');
     let password: string = $state('');
-    let successMessage: string = $state('');
-    let errorMessage: string = $state('');
+    let message: string | null = $state(null);
+    let messageType: string = $state('');
 
     function submitRegisterForm() {
         const url = '/api/v1/register';
@@ -20,18 +20,12 @@
         })
         .then(response => response.json())
         .then(data => {
-            if (data.success) {
-                successMessage = 'Регистрацията беше успешна! Можете да влезете сега.';
-                errorMessage = '';
-            }
-            else {
-                errorMessage = data.message || 'Регистрацията не беше успешна. Моля, опитайте отново.';
-                successMessage = '';
-            }
+            message = data.message;
+            messageType = data.success ? 'success' : 'error';
         })
         .catch(error => {
-            errorMessage = 'Възникна грешка при регистрацията. Моля, опитайте отново. Грешка: ' + error.message;
-            successMessage = '';
+            message = 'Възникна грешка при регистрацията. Моля, опитайте отново. Грешка: ' + error.message;
+            messageType = 'error';
         });
     }
 </script>
@@ -39,7 +33,6 @@
 <ExternalNavigation />
 
 <form>
-    <MessageBox successMessage={successMessage} errorMessage={errorMessage} />
     <label for="email">Имейл:</label>
     <input type="email" name="email" required bind:value={email}>
     <br>
@@ -50,4 +43,5 @@
     <input type="password" name="password" required bind:value={password}>
     <br>
     <input type="button" value="Регистрация" onclick={submitRegisterForm}>
+        <MessageBox message={message} messageType={messageType} />
 </form>

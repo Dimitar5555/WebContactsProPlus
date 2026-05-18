@@ -1,9 +1,12 @@
 <script lang="ts">
-    let { successMessage, errorMessage }: { successMessage: string, errorMessage: string } = $props();
+    let { message, messageType }: { message: string | null, messageType: string } = $props();
 </script>
-<div class="alert alert-success" role="alert" hidden={!successMessage}>
-    {successMessage}
-</div>
-<div class="alert alert-danger" role="alert" hidden={!errorMessage}>
-    {errorMessage}
+<div 
+    class="alert"
+    class:alert-success={messageType === 'success'}
+    class:alert-danger={messageType === 'error'}
+    class:d-none={message === null}
+    role="alert"
+    >
+    {message}
 </div>

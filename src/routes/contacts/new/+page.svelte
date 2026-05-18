@@ -4,8 +4,8 @@
     import LogoutButton from '$lib/components/LogoutButton.svelte';
     import MessageBox from "$lib/components/MessageBox.svelte";
 
-    let successMessage: string = $state('');
-    let errorMessage: string = $state('');
+    let message = $state('');
+    let messageType = $state('');
     let dataState = $state({
         contact: {
             first_name: '',
@@ -29,20 +29,20 @@
         .then(response => response.json())
         .then(data => {
             if (data.error) {
-                errorMessage = data.error;
-                successMessage = '';
+                message = data.error;
+                messageType = 'error';
             }
             else {
-                successMessage = data.message;
-                errorMessage = '';
+                message = data.message;
+                messageType = 'success';
                 setTimeout(() => {
                     window.location.href = '/contacts';
                 }, 1000);
             }
         })
         .catch(() => {
-            errorMessage = 'Грешка при създаването на контакта';
-            successMessage = '';
+            message = 'Грешка при създаването на контакта';
+            messageType = 'error';
         });
     }
 </script>
@@ -51,7 +51,7 @@
 <LogoutButton />
 
 <form onsubmit={handleSubmit}>
-    <MessageBox successMessage={successMessage} errorMessage={errorMessage} />
+    <MessageBox message={message} messageType={messageType} />
     <ContactForm bind:data={dataState} />
     <button>Създай контакт</button>
 </form>

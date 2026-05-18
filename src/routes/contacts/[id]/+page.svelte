@@ -4,8 +4,8 @@
     import MessageBox from '$lib/components/MessageBox.svelte';
     import type { PageProps } from './$types';
 
-    let successMessage = $state('');
-    let errorMessage = $state('');
+    let message = $state('');
+    let messageType = $state('');
 
     let { data }: PageProps = $props();
 
@@ -16,17 +16,20 @@
             })
             .then(response => {
                 if(response.ok) {
-                    successMessage = 'Контактът беше успешно изтрит.';
+                    message = 'Контактът беше успешно изтрит.';
+                    messageType = 'success';
                     window.setTimeout(() => {
                         window.location.href = '/contacts';
                     }, 2000);
                 }
                 else {
-                    errorMessage = 'Възникна грешка при изтриването на контакта.';
+                    message = 'Възникна грешка при изтриването на контакта.';
+                    messageType = 'error';
                 }
             })
             .catch(() => {
-                errorMessage = 'Възникна грешка при изтриването на контакта.';
+                message = 'Възникна грешка при изтриването на контакта.';
+                messageType = 'error';
             });
         }
     }
@@ -43,7 +46,7 @@
     {@const contact = data.contact}
     <button on:click={() => window.location.href = `/contacts/${data.contact.id}/edit`}>Редактирай</button>
     <button on:click={deleteContact}>Изтрий</button>
-    <MessageBox successMessage={successMessage} errorMessage={errorMessage} />
+    <MessageBox message={message} messageType={messageType} />
     <h2>{contact.first_name} {contact.last_name}</h2>
     <ul>
         {#each data.phone_numbers as phone}
