@@ -1,7 +1,6 @@
 <script lang="ts">
     import ContactForm from '$lib/components/ContactForm.svelte';
     import InternalNavigation from '$lib/components/InternalNavigation.svelte';
-    import LogoutButton from '$lib/components/LogoutButton.svelte';
     import MessageBox from "$lib/components/MessageBox.svelte";
 
     let message = $state('');
@@ -60,7 +59,6 @@
 </script>
 
 <InternalNavigation />
-<LogoutButton />
 
 <form onsubmit={handleSubmit}>
     <MessageBox message={message} messageType={messageType} />

@@ -1,8 +1,22 @@
+import { sequence } from '@sveltejs/kit/hooks';
+import type { Handle } from '@sveltejs/kit'
+
+
+import { locale } from 'svelte-i18n'
+
+
 import jwt from 'jsonwebtoken';
 import { JWT_SECRET } from '$env/static/private';
-import { redirect } from '@sveltejs/kit';
 
-export const handle: Handle = async ({ event, resolve, reject }) => {
+const first: Handle = async ({ event, resolve }) => {
+	const lang = event.cookies.get('lang')
+	if(lang) {
+		locale.set(lang)
+	}
+	return resolve(event);
+}
+
+const second: Handle = async ({ event, resolve, reject }) => {
     const pathname = event.url.pathname;
     const publicPaths = ['/login', '/register', '/about', '/favicon.ico', '/api/v1/login', '/api/v1/register'];
     const isPublic = publicPaths.includes(pathname);
@@ -27,3 +41,5 @@ export const handle: Handle = async ({ event, resolve, reject }) => {
     }
     return await resolve(event);
 }
+
+export const handle = sequence(first, second);

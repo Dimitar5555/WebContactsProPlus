@@ -4,7 +4,6 @@
     import scriptSrc from 'bootstrap/dist/js/bootstrap.bundle.js?url';
 	import 'bootstrap-icons/font/bootstrap-icons.css';
 
-
 	let { children } = $props();
 </script>
 

@@ -1,3 +1,5 @@
+import { $_ } from '$lib/server/i18n';
+
 import { type Cookies } from '@sveltejs/kit';
 import { database } from '$lib/database';
 import jwt from 'jsonwebtoken';
@@ -10,12 +12,12 @@ export async function POST({ request, cookies }: { request: Request, cookies: Co
     const password = data.get('password');
 
     if (!username || !password) {
-        return json({ success: false, message: 'Липсва потребителско име или парола' });
+        return json({ success: false, message: $_('api.login.missing_credentials') });
     }
 
     const user = await database.users.findByUsername(username);
     if (!user || user.password !== password) {
-        return json({ success: false, message: 'Невалидно потребителско име или парола' });
+        return json({ success: false, message: $_('api.login.invalid_credentials') });
     }
 
     const token = { id: user.id, username: user.username };
@@ -28,5 +30,5 @@ export async function POST({ request, cookies }: { request: Request, cookies: Co
         path: '/'
     } as any);
 
-    return json({ success: true, message: 'Успешно влизане' });
+    return json({ success: true, message: $_('api.login.success') });
 }

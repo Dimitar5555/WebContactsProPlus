@@ -1,0 +1,36 @@
+{
+    "api": {
+        "login": {
+            "missing_credentials": "Липсва потребителско име или парола",
+            "invalid_credentials": "Невалидно потребителско име или парола",
+            "success": "Успешно влизане"
+        }
+    },
+    "navigation": {
+        "home": "Начало",
+        "login": "Вход",
+        "register": "Регистрация",
+        "contacts": "Контакти",
+        "favourite_contacts": "Любими контакти",
+        "logout": "Изход"
+    },
+    "login": {
+        "title": "Вход",
+        "username": "Потребителско име",
+        "password": "Парола",
+        "submit": "Влез",
+        "loginAsUser1": "Влез като user1",
+        "loginAsUser2": "Влез като user2",
+        "registerPrompt": "Нямате акаунт?",
+        "registerLink": "Регистрирайте се"
+    },
+    "register": {
+        "title": "Регистрация",
+        "email": "Имейл",
+        "username": "Потребителско име",
+        "password": "Парола",
+        "submit": "Регистрация",
+        "already_have_account": "Вече имате регистрация?",
+        "login_link": "Влезте тук"
+    }
+}

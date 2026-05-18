@@ -1,0 +1,36 @@
+{
+    "api": {
+        "login": {
+            "missing_credentials": "Missing username or password",
+            "invalid_credentials": "Invalid username or password",
+            "success": "Login successful"
+        }
+    },
+    "navigation": {
+        "home": "Home",
+        "login": "Login",
+        "register": "Register",
+        "contacts": "Contacts",
+        "favourite_contacts": "Favourite Contacts",
+        "logout": "Logout"
+    },
+    "login": {
+        "title": "Login",
+        "username": "Username",
+        "password": "Password",
+        "submit": "Login",
+        "loginAsUser1": "Login as user1",
+        "loginAsUser2": "Login as user2",
+        "registerPrompt": "Don't have an account?",
+        "registerLink": "Register"
+    },
+    "register": {
+        "title": "Register",
+        "email": "Email",
+        "username": "Username",
+        "password": "Password",
+        "submit": "Register",
+        "already_have_account": "Already have an account?",
+        "login_link": "Login here"
+    }
+}
