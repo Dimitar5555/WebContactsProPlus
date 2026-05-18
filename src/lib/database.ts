@@ -15,6 +15,7 @@ db.exec(`
         last_name TEXT NOT NULL,
         is_favourite INTEGER DEFAULT 0,
         notes TEXT,
+        photo_url TEXT DEFAULT NULL,
         FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
     );
 
@@ -109,6 +110,22 @@ export const database = {
         delete: async (id: number, userId: number)  => {
             const stmt = db.prepare('DELETE FROM contacts WHERE id = ? AND user_id = ?');
             stmt.run(id, userId);
+        }
+    },
+
+    contactPhotos: {
+        findById: async (contact_id: number) => {
+            const stmt = db.prepare('SELECT photo_url FROM contacts WHERE id = ?');
+            const row = stmt.get(contact_id);
+            return row;
+        },
+        create: async ({ contact_id, photo_url }: any) => {
+            const stmt = db.prepare('UPDATE contacts SET photo_url = ? WHERE id = ?');
+            stmt.run(photo_url, contact_id);
+        },
+        delete: async (contact_id: number) => {
+            const stmt = db.prepare('UPDATE contacts SET photo_url = NULL WHERE id = ?');
+            stmt.run(contact_id);
         }
     },
 

@@ -9,17 +9,35 @@
     let message = $state('');
     let { data }: PageProps = $props();
     let dataState = $state(data);
+    let photo_file = $state(null);
+    let remove_photo = $state(false);
 
     function submitForm(event: Event) {
         event.preventDefault();
-        fetch(`/api/v1/contacts/${dataState.contact.id}`, {
+        const api_calls = [];
+        const contactsCall = fetch(`/api/v1/contacts/${dataState.contact.id}`, {
             method: 'PUT',
             body: JSON.stringify({...dataState.contact, phone_numbers: dataState.phone_numbers})
-        })
-        .then(response => {
-            if(response.ok) {
-                successMessage = 'Контактът беше успешно обновен.';
-                errorMessage = '';
+        });
+        api_calls.push(contactsCall);
+        if(photo_file) {
+            const photoCall = fetch(`/api/v1/contacts/${dataState.contact.id}/photo`, {
+                method: 'POST',
+                body: photo_file
+            });
+            api_calls.push(photoCall);
+        }
+        else if(remove_photo) {
+            const removePhotoCall = fetch(`/api/v1/contacts/${dataState.contact.id}/photo`, {
+                method: 'DELETE'
+            });
+            api_calls.push(removePhotoCall);
+        }
+        Promise.all(api_calls)
+        .then(responses => {
+            if(responses[0].ok && (responses.length === 1 || responses[1].ok)) {
+                messageType = 'success';
+                message = 'Контактът беше успешно обновен.';
                 setTimeout(() => {
                     window.location.href = `/contacts/${dataState.contact.id}`;
                 }, 1000);

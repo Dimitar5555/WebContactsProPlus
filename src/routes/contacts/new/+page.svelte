@@ -14,6 +14,8 @@
         },
         phone_numbers: [{id: null, phone_number: '', label: null}]
     });
+    let photo_file = $state(null);
+    let remove_photo = $state(false);
 
     function handleSubmit(event: Event) {
         event.preventDefault();
@@ -21,27 +23,37 @@
             ...dataState.contact,
             phone_numbers: dataState.phone_numbers.filter(p => p.phone_number.trim() !== '')
         }
-
         fetch('/api/v1/contacts', {
             method: 'POST',
             body: JSON.stringify(all_data)
         })
         .then(response => response.json())
-        .then(data => {
-            if (data.error) {
-                message = data.error;
-                messageType = 'error';
+        .then(async (data) => {
+            if(data.error) {
+                throw data.error;
             }
-            else {
-                message = data.message;
-                messageType = 'success';
-                setTimeout(() => {
-                    window.location.href = '/contacts';
-                }, 1000);
+            if(!photo_file) {
+                return data;
             }
+            const photoCall = await fetch(`/api/v1/contacts/${data.contactId}/photo`, {
+                method: 'POST',
+                body: photo_file
+            });
+            const newData = await photoCall.json();
+            if(newData.error) {
+                throw newData.error;
+            }
+            return data;
         })
-        .catch(() => {
-            message = 'Грешка при създаването на контакта';
+        .then((data) => {
+            message = data.message;
+            messageType = 'success';
+            setTimeout(() => {
+                window.location.href = `/contacts/${data.contactId}`;
+            }, 1000);
+        })
+        .catch((err) => {
+            message = err;
             messageType = 'error';
         });
     }
@@ -52,6 +64,6 @@
 
 <form onsubmit={handleSubmit}>
     <MessageBox message={message} messageType={messageType} />
-    <ContactForm bind:data={dataState} />
+    <ContactForm bind:data={dataState} bind:photo_file={photo_file} bind:remove_photo={remove_photo} />
     <button>Създай контакт</button>
 </form>

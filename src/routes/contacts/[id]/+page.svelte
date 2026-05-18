@@ -11,11 +11,20 @@
 
     function deleteContact() {
         if (confirm('Сигурни ли сте, че искате да изтриете този контакт?')) {
-            fetch(`/api/v1/contacts/${data.contact.id}`, {
+            const promises = [];
+            if(data.contact.photo_url) {
+                const deletePhotoPromise = fetch(`/api/v1/contacts/${data.contact.id}/photo`, {
+                    method: 'DELETE'
+                });
+                promises.push(deletePhotoPromise);
+            }
+            const deleteContactPromise = fetch(`/api/v1/contacts/${data.contact.id}`, {
                 method: 'DELETE'
-            })
-            .then(response => {
-                if(response.ok) {
+            });
+            promises.push(deleteContactPromise);
+            Promise.all(promises)
+            .then(responses => {
+                if(responses.every(res => res.ok)) {
                     message = 'Контактът беше успешно изтрит.';
                     messageType = 'success';
                     window.setTimeout(() => {
@@ -47,6 +56,13 @@
     <button on:click={() => window.location.href = `/contacts/${data.contact.id}/edit`}>Редактирай</button>
     <button on:click={deleteContact}>Изтрий</button>
     <MessageBox message={message} messageType={messageType} />
+    <img 
+        src={`/api/v1/photos/${contact.photo_url}`}
+        alt="Снимка на контакта"
+        width="200"
+        height="200"
+        class:d-none={!contact.photo_url}
+    />
     <h2>{contact.first_name} {contact.last_name}</h2>
     <ul>
         {#each data.phone_numbers as phone}
