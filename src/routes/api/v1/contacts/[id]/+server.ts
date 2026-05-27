@@ -27,14 +27,14 @@ export async function GET({ params, locals }) {
     }
 }
 
-export async function PUT({ params, request, locals }) {
+export async function PUT({ params, request, locals }: any) {
     if(!locals.user) {
         return json({ error: $_('api.contacts.unauthorized_user') }, { status: 401 });
     }
     const userId = locals.user.id;
     try {
         const contactId = Number(params.id);
-        const body = await request.json();
+        const body: any = await request.json();
         const { first_name, last_name, notes } = body;
 
         if (isNaN(contactId) || !first_name || !last_name) {
@@ -53,23 +53,24 @@ export async function PUT({ params, request, locals }) {
             notes
         });
 
-        const phoneNumbers = await database.phoneNumbers.findByContactId(contactId);
-        const existingPhoneNumberIds = phoneNumbers.map(pn => pn.id);
-        const incomingPhoneNumberIds = body.phone_numbers.map(pn => pn.id).filter(id => id !== undefined);
+        const phoneNumbers: any[] = await database.phoneNumbers.findByContactId(contactId);
+        const existingPhoneNumberIds = phoneNumbers.map((pn: any) => pn.id);
+        const incomingPhoneNumberIds = (body.phone_numbers || []).map((pn: any) => pn.id).filter((id: any) => id !== undefined);
 
 
-        for (const pn of body.phone_numbers) {
-            if (pn.id && existingPhoneNumberIds.includes(pn.id)) {
-                await database.phoneNumbers.update(pn.id, {
-                    phone_number: pn.phone_number,
-                    label: pn.label
+        for (const pn of (body.phone_numbers || [])) {
+            const item: any = pn;
+            if (item.id && existingPhoneNumberIds.includes(item.id)) {
+                await database.phoneNumbers.update(item.id, {
+                    phone_number: item.phone_number,
+                    label: item.label
                 });
             }
             else {
                 await database.phoneNumbers.create({
                     contact_id: contactId,
-                    phone_number: pn.phone_number,
-                    label: pn.label
+                    phone_number: item.phone_number,
+                    label: item.label
                 });
             }
         }

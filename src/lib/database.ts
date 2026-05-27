@@ -72,7 +72,7 @@ const mapContact = (row: any)  => {
 
 export const database = {
     contacts: {
-        findMany: async ({ where, userId }: QueryParams<any>) => {
+        findMany: async ({ where, userId }: QueryParams<any>): Promise<any[]> => {
             let query = 'SELECT * FROM contacts WHERE user_id = ?';
             const params: any[] = [userId];
 
@@ -87,20 +87,20 @@ export const database = {
             return rows.map(mapContact);
         },
 
-        findById: async (id: number, userId: number) => {
+        findById: async (id: number, userId: number): Promise<any | undefined> => {
             const stmt = db.prepare('SELECT * FROM contacts WHERE id = ? AND user_id = ?');
             const row = stmt.get(id, userId);
 
             return mapContact(row);
         },
 
-        create: async ({ user_id, first_name, last_name, is_favourite = false, notes = null }: any)  => {
+        create: async ({ user_id, first_name, last_name, is_favourite = false, notes = null }: any): Promise<number>  => {
             const stmt = db.prepare('INSERT INTO contacts (user_id, first_name, last_name, is_favourite, notes) VALUES (?, ?, ?, ?, ?)');
             const result = stmt.run(user_id, first_name, last_name, is_favourite ? 1 : 0, notes);
             return result.lastInsertRowid as number;
         },
 
-        update: async (id: number, userId: number, { first_name, last_name, is_favourite, notes }: any) => {
+        update: async (id: number, userId: number, { first_name, last_name, is_favourite, notes }: any): Promise<void> => {
             const stmt = db.prepare(`
                 UPDATE contacts 
                 SET first_name = ?, last_name = ?, is_favourite = ?, notes = ? 
@@ -109,74 +109,74 @@ export const database = {
             stmt.run(first_name, last_name, is_favourite ? 1 : 0, notes, id, userId);
         },
 
-        delete: async (id: number, userId: number)  => {
+        delete: async (id: number, userId: number): Promise<void>  => {
             const stmt = db.prepare('DELETE FROM contacts WHERE id = ? AND user_id = ?');
             stmt.run(id, userId);
         }
     },
 
     contactPhotos: {
-        findById: async (contact_id: number) => {
+        findById: async (contact_id: number): Promise<any> => {
             const stmt = db.prepare('SELECT photo_url FROM contacts WHERE id = ?');
             const row = stmt.get(contact_id);
             return row;
         },
-        create: async ({ contact_id, photo_url }: any) => {
+        create: async ({ contact_id, photo_url }: any): Promise<void> => {
             const stmt = db.prepare('UPDATE contacts SET photo_url = ? WHERE id = ?');
             stmt.run(photo_url, contact_id);
         },
-        delete: async (contact_id: number) => {
+        delete: async (contact_id: number): Promise<void> => {
             const stmt = db.prepare('UPDATE contacts SET photo_url = NULL WHERE id = ?');
             stmt.run(contact_id);
         }
     },
 
     phoneNumbers: {
-        findByContactId: async (contact_id: number) => {
+        findByContactId: async (contact_id: number): Promise<any[]> => {
             const stmt = db.prepare('SELECT * FROM phone_numbers WHERE contact_id = ?');
             return stmt.all(contact_id);
         },
 
-        create: async ({ contact_id, phone_number, label = null }: any) => {
+        create: async ({ contact_id, phone_number, label = null }: any): Promise<number> => {
             const stmt = db.prepare('INSERT INTO phone_numbers (contact_id, phone_number, label) VALUES (?, ?, ?)');
             const result = stmt.run(contact_id, phone_number, label);
             return result.lastInsertRowid as number;
         },
 
-        update: async (id: number, { phone_number, label }: any) => {
+        update: async (id: number, { phone_number, label }: any): Promise<void> => {
             const stmt = db.prepare('UPDATE phone_numbers SET phone_number = ?, label = ? WHERE id = ?');
             stmt.run(phone_number, label, id);
         },
 
-        delete: async (id: number) => {
+        delete: async (id: number): Promise<void> => {
             const stmt = db.prepare('DELETE FROM phone_numbers WHERE id = ?');
             stmt.run(id);
         }
     },
 
     users: {
-        findByUsername: async (username: string): Promise<User> => {
+        findByUsername: async (username: string): Promise<User | undefined> => {
             const stmt = db.prepare('SELECT * FROM users WHERE username = ?');
             return stmt.get(username) as User;
         },
 
-        findByEmail: async (email: string) => {
+        findByEmail: async (email: string): Promise<User | undefined> => {
             const stmt = db.prepare('SELECT * FROM users WHERE email = ?');
             return stmt.get(email) as User;
         },
 
-        create: async ({ username, password, email }: any) => {
+        create: async ({ username, password, email }: any): Promise<number> => {
             const stmt = db.prepare('INSERT INTO users (username, password, email) VALUES (?, ?, ?)');
             const result = stmt.run(username, password, email);
             return result.lastInsertRowid as number;
         },
 
-        update: async (id: number, { username, password, email }: any) => {
+        update: async (id: number, { username, password, email }: any): Promise<void> => {
             const stmt = db.prepare('UPDATE users SET username = ?, password = ?, email = ? WHERE id = ?');
             stmt.run(username, password, email, id);
         },
 
-        delete: async (id: number) => {
+        delete: async (id: number): Promise<void> => {
             const stmt = db.prepare('DELETE FROM users WHERE id = ?');
             stmt.run(id);
         }

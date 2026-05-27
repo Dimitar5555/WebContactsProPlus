@@ -6,7 +6,7 @@ import { locale } from 'svelte-i18n'
 
 
 import jwt from 'jsonwebtoken';
-import { JWT_SECRET } from '$env/static/private';
+import * as env from '$env/static/private';
 
 const first: Handle = async ({ event, resolve }) => {
 	const lang = event.cookies.get('lang')
@@ -16,7 +16,7 @@ const first: Handle = async ({ event, resolve }) => {
 	return resolve(event);
 }
 
-const second: Handle = async ({ event, resolve, reject }) => {
+const second: Handle = async ({ event, resolve }: any) => {
     const pathname = event.url.pathname;
     const publicPaths = ['/login', '/register', '/about', '/favicon.ico', '/api/v1/login', '/api/v1/register'];
     const isPublic = publicPaths.includes(pathname);
@@ -31,9 +31,10 @@ const second: Handle = async ({ event, resolve, reject }) => {
             return new Response('Redirecting', {status: 303, headers: { Location: '/login' }});
         }
         try {
-            const decoded = jwt.verify(token, JWT_SECRET);
-            event.locals.user = decoded;
-        } 
+            const JWT_SECRET = (env as any).JWT_SECRET ?? process.env.JWT_SECRET ?? 'secret';
+            const decoded = jwt.verify(token, JWT_SECRET as any);
+            event.locals.user = decoded as any;
+        }
         catch (err) {
             event.locals.user = null;
             return new Response('Redirecting', {status: 303, headers: { Location: '/login' }});

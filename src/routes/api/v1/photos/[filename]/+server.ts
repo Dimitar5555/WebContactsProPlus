@@ -17,20 +17,33 @@ const MIME: Record<string, string> = {
  */
 export function GET({ params }) {
     const filename = params.filename;
-    const filePath = path.join(uploadDir, params.filename);
+    let decoded;
+    try {
+        decoded = decodeURIComponent(filename);
+    }
+    catch {
+        decoded = filename;
+    }
 
-    if (filename.includes('..') || !fs.existsSync(filePath) || !fs.statSync(filePath).isFile()) {
+    const uploadRoot = path.resolve(uploadDir);
+    const resolvedPath = path.resolve(uploadRoot, decoded);
+    if (!resolvedPath.startsWith(uploadRoot + path.sep) && resolvedPath !== uploadRoot) {
         return new Response($_('api.photos.not_found'), { status: 404 });
     }
 
-    const ext = path.extname(params.filename).toLowerCase();
+    if (!fs.existsSync(resolvedPath) || !fs.statSync(resolvedPath).isFile()) {
+        return new Response($_('api.photos.not_found'), { status: 404 });
+    }
+
+    const ext = path.extname(resolvedPath).toLowerCase();
     const contentType = MIME[ext] ?? 'application/octet-stream';
-    const buffer = fs.readFileSync(filePath);
+    const buffer = fs.readFileSync(resolvedPath);
 
     return new Response(buffer, {
         headers: {
             'Content-Type': contentType,
-            'Content-Length': buffer.length.toString()
+            'Content-Length': buffer.length.toString(),
+            'Cache-Control': 'public, max-age=86400'
         }
     });
 }

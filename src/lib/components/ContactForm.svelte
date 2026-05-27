@@ -1,7 +1,5 @@
 <script lang="ts">
-    import type { PageProps } from './$types';
-
-    let { data = $bindable(), photo_file = $bindable(), remove_photo = $bindable() }: PageProps = $props();
+    let { data = $bindable(), photo_file = $bindable(), remove_photo = $bindable() }: any = $props();
     let contact = $state(data.contact);
     let phoneNumbers = $state(data.phone_numbers);
 </script>
@@ -11,9 +9,10 @@
 <label>Снимка</label>
 <canvas width="360" height="360"></canvas>
 <input type="file" name="contactPhoto" accept="image/*" onchange={async (e) => {
-    const canvasEl = document.querySelector('canvas') as HTMLCanvasElement;
+    const canvasEl = document.querySelector('canvas') as HTMLCanvasElement | null;
     const fileReader = new FileReader();
-    photo_file = (e.target as HTMLInputElement).files[0] as File;
+    const file = (e.target as HTMLInputElement).files?.[0];
+    photo_file = file as File | null;
     if(photo_file) {
         fileReader.readAsDataURL(photo_file);
         fileReader.onload = (event) => {
@@ -21,14 +20,15 @@
             const img = new Image();
             img.onload = () => {
                 const ctx = canvasEl?.getContext('2d');
-                if(ctx) {
-                    const scale = Math.min(canvasEl.width / img.width, canvasEl.height / img.height);
-                    const x = (canvasEl.width / 2) - (img.width / 2) * scale;
-                    const y = (canvasEl.height / 2) - (img.height / 2) * scale;
+                if(ctx && canvasEl) {
+                    const canvas = canvasEl as HTMLCanvasElement;
+                    const scale = Math.min(canvas.width / img.width, canvas.height / img.height);
+                    const x = (canvas.width / 2) - (img.width / 2) * scale;
+                    const y = (canvas.height / 2) - (img.height / 2) * scale;
                     ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
                 }
             };
-            img.src = event.target?.result as string;
+            img.src = (event.target as FileReader).result as string;
         };
     }
 }} />
