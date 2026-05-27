@@ -30,11 +30,13 @@ db.exec(`
 `);
 
 const userCount = db.prepare('SELECT COUNT(*) as count FROM users').get() as { count: number };
-
+import bcrypt from 'bcrypt';
 if (userCount.count === 0) {
+    const hashedPassword1 = bcrypt.hashSync('password1', 10);
+    const hashedPassword2 = bcrypt.hashSync('password2', 10);
     const insertUser = db.prepare('INSERT INTO users (username, password, email) VALUES (?, ?, ?)');
-    insertUser.run('user1', 'password1', 'user1@example.com');
-    insertUser.run('user2', 'password2', 'user2@example.com');
+    insertUser.run('user1', hashedPassword1, 'user1@example.com');
+    insertUser.run('user2', hashedPassword2, 'user2@example.com');
 
     const insertContact = db.prepare('INSERT INTO contacts (user_id, first_name, last_name, is_favourite, notes) VALUES (?, ?, ?, ?, ?)');
     insertContact.run(1, 'Иван', 'Петров', 1, null);
@@ -153,14 +155,14 @@ export const database = {
     },
 
     users: {
-        findByUsername: async (username: string) => {
+        findByUsername: async (username: string): Promise<User> => {
             const stmt = db.prepare('SELECT * FROM users WHERE username = ?');
-            return stmt.get(username);
+            return stmt.get(username) as User;
         },
 
         findByEmail: async (email: string) => {
             const stmt = db.prepare('SELECT * FROM users WHERE email = ?');
-            return stmt.get(email);
+            return stmt.get(email) as User;
         },
 
         create: async ({ username, password, email }: any) => {
