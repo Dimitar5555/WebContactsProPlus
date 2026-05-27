@@ -5,6 +5,7 @@ import { database } from '$lib/database';
 import jwt from 'jsonwebtoken';
 import { JWT_SECRET } from '$env/static/private';
 import { json } from '@sveltejs/kit';
+import bcrypt from 'bcrypt';
 
 export async function POST({ request, cookies }: { request: Request, cookies: Cookies }) {
     const data = await request.formData();
@@ -16,7 +17,7 @@ export async function POST({ request, cookies }: { request: Request, cookies: Co
     }
 
     const user = await database.users.findByUsername(username);
-    if (!user || user.password !== password) {
+    if (!user || !bcrypt.compareSync(password, user.password)) {
         return json({ success: false, message: $_('api.login.invalid_credentials') });
     }
 
