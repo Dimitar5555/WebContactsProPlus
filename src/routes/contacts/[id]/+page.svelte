@@ -1,4 +1,5 @@
 <script lang="ts">
+import {_} from 'svelte-i18n';
     import InternalNavigation from '$lib/components/InternalNavigation.svelte';
     import MessageBox from '$lib/components/MessageBox.svelte';
     import type { PageProps } from './$types';
@@ -9,7 +10,7 @@
     let { data }: PageProps = $props();
 
     function deleteContact() {
-        if (confirm('Сигурни ли сте, че искате да изтриете този контакт?')) {
+        if (confirm($_('contacts.confirm_delete'))) {
             const promises = [];
             if(data.contact.photo_url) {
                 const deletePhotoPromise = fetch(`/api/v1/contacts/${data.contact.id}/photo`, {
@@ -24,19 +25,19 @@
             Promise.all(promises)
             .then(responses => {
                 if(responses.every(res => res.ok)) {
-                    message = 'Контактът беше успешно изтрит.';
+                    message = $_('contacts.delete_success');
                     messageType = 'success';
                     window.setTimeout(() => {
                         window.location.href = '/contacts';
                     }, 2000);
                 }
                 else {
-                    message = 'Възникна грешка при изтриването на контакта.';
+                    message = $_('contacts.delete_failed');
                     messageType = 'error';
                 }
             })
             .catch(() => {
-                message = 'Възникна грешка при изтриването на контакта.';
+                message = $_('contacts.delete_failed');
                 messageType = 'error';
             });
         }
@@ -45,17 +46,17 @@
 
 <InternalNavigation />
 
-<button on:click={() => history.back()}>Назад</button>
+<button on:click={() => history.back()}>{$_('contacts.back')}</button>
 {#if !data.contact}
-    <p>Контактът не е намерен.</p>
+    <p>{$_('contacts.not_found')}</p>
 {:else}
     {@const contact = data.contact}
-    <button on:click={() => window.location.href = `/contacts/${data.contact.id}/edit`}>Редактирай</button>
-    <button on:click={deleteContact}>Изтрий</button>
+    <button on:click={() => window.location.href = `/contacts/${data.contact.id}/edit`}>{$_('contacts.save')}</button>
+    <button on:click={deleteContact}>{$_('contacts.delete')}</button>
     <MessageBox message={message} messageType={messageType} />
     <img 
         src={`/api/v1/photos/${contact.photo_url}`}
-        alt="Снимка на контакта"
+        alt={$_('contacts.photo_alt')}
         width="200"
         height="200"
         class:d-none={!contact.photo_url}
@@ -67,9 +68,9 @@
         {/each}
     </ul>
     {#if contact.is_favourite}
-        <p>Този контакт е в любими.</p>
+        <p>{$_('contacts.is_favourite')}</p>
     {/if}
     {#if contact.notes}
-        <p>Бележки: {contact.notes}</p>
+        <p>{$_('contacts.notes')}: {contact.notes}</p>
     {/if}
 {/if}

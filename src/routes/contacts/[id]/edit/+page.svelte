@@ -1,4 +1,5 @@
 <script lang="ts">
+import {_} from 'svelte-i18n';
     import ContactForm from '$lib/components/ContactForm.svelte';
     import InternalNavigation from '$lib/components/InternalNavigation.svelte';
     import MessageBox from '$lib/components/MessageBox.svelte';
@@ -36,32 +37,32 @@
         .then(responses => {
             if(responses[0].ok && (responses.length === 1 || responses[1].ok)) {
                 messageType = 'success';
-                message = 'Контактът беше успешно обновен.';
+                message = $_('contacts.success_update');
                 setTimeout(() => {
                     window.location.href = `/contacts/${dataState.contact.id}`;
                 }, 1000);
             }
             else {
                 messageType = 'error';
-                message = 'Възникна грешка при обновяването на контакта.';
+                message = $_('contacts.failed_update');
             }
         })
         .catch(() => {
             messageType = 'error';
-            message = 'Възникна грешка при обновяването на контакта.';
+            message = $_('contacts.failed_update');
         });
     }
 </script>
 
 <InternalNavigation />
 
-<button on:click={() => history.back()}>Назад</button>
+<button on:click={() => history.back()}>{$_('contacts.back')}</button>
 {#if !data.contact}
-    <p>Контактът не е намерен.</p>
+    <p>{$_('contact.not_found')}</p>
 {:else}
     <form on:submit={submitForm}>
         <MessageBox message={message} messageType={messageType} />
         <ContactForm bind:data={dataState} bind:photo_file={photo_file} bind:remove_photo={remove_photo} />
-        <button type="submit">Запази</button>
+        <button type="submit">{$_('contacts.save')}</button>
     </form>
 {/if}
