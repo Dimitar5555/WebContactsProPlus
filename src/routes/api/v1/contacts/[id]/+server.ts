@@ -1,34 +1,35 @@
 import { json } from '@sveltejs/kit';
 import { database } from '$lib/database';
+import {$_} from '$lib/server/i18n.js'
 
 export async function GET({ params, locals }) {
     if(!locals.user) {
-        return json({ error: 'Unauthorized' }, { status: 401 });
+        return json({ error: $_('api.contacts.unauthorized_user') }, { status: 401 });
     }
     const userId = locals.user.id;
     try {
         const contactId = Number(params.id);
 
         if (isNaN(contactId)) {
-            return json({ error: 'Invalid contact ID' }, { status: 400 });
+            return json({ error: $_('api.contacts.invalid_id') }, { status: 400 });
         }
 
         const contact = await database.contacts.findById(contactId, userId);
 
         if (!contact || contact.user_id !== userId) {
-            return json({ error: 'Contact not found' }, { status: 404 });
+            return json({ error: $_('api.contacts.contact_not_found') }, { status: 404 });
         }
 
         return json(contact, { status: 200 });
     } 
     catch (error) {
-        return json({ error: 'Failed to fetch contact' }, { status: 500 });
+        return json({ error: $_('api.contacts.server_error') }, { status: 500 });
     }
 }
 
 export async function PUT({ params, request, locals }) {
     if(!locals.user) {
-        return json({ error: 'Unauthorized' }, { status: 401 });
+        return json({ error: $_('api.contacts.unauthorized_user') }, { status: 401 });
     }
     const userId = locals.user.id;
     try {
@@ -37,13 +38,13 @@ export async function PUT({ params, request, locals }) {
         const { first_name, last_name, notes } = body;
 
         if (isNaN(contactId) || !first_name || !last_name) {
-            return json({ error: 'Invalid ID, or missing required fields' }, { status: 400 });
+            return json({ error: $_('api.contacts.missing_fields') }, { status: 400 });
         }
 
         const contact = await database.contacts.findById(contactId, userId);
 
         if (!contact || contact.user_id !== userId) {
-            return json({ error: 'Contact not found' }, { status: 404 });
+            return json({ error: $_('api.contacts.contact_not_found') }, { status: 404 });
         }
 
         await database.contacts.update(contactId, userId, {
@@ -79,36 +80,36 @@ export async function PUT({ params, request, locals }) {
             }
         }
 
-        return json({ message: 'Contact updated successfully' }, { status: 200 });
+        return json({ message: $_('api.contacts.success_update') }, { status: 200 });
     } 
     catch (error) {
-        return json({ error: 'Failed to update contact' + error.message }, { status: 500 });
+        return json({ error: $_('api.contacts.failed_update') }, { status: 500 });
     }
 }
 
 export async function DELETE({ params, locals }) {
     if(!locals.user) {
-        return json({ error: 'Unauthorized' }, { status: 401 });
+        return json({ error: $_('api.contacts.unauthorized_user') }, { status: 401 });
     }
     const userId = locals.user.id;
     try {
         const contactId = Number(params.id);
 
         if (isNaN(contactId)) {
-            return json({ error: 'Invalid contact ID or missing userId' }, { status: 400 });
+            return json({ error: $_('api.contacts.unauthorized_user') }, { status: 400 });
         }
 
         const contact = await database.contacts.findById(contactId, userId);
         
         if (!contact || contact.user_id !== userId) {
-            return json({ error: 'Contact not found' }, { status: 404 });
+            return json({ error: $_('api.contacts.contact_not_found') }, { status: 404 });
         }
 
         await database.contacts.delete(contactId, userId);
 
-        return json({ message: 'Contact deleted successfully' }, { status: 200 });
+        return json({ message: $_('api.contacts.success_delete') }, { status: 200 });
     } 
     catch (error) {
-        return json({ error: 'Failed to delete contact' }, { status: 500 });
+        return json({ error: $_('api.contacts.failed_delete') }, { status: 500 });
     }
 }

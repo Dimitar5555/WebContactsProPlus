@@ -26,7 +26,7 @@
             </ul>
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item" role="button">
-                    <a class="nav-link" onclick={logout}>{$_('navigation.exit')}</a>
+                    <a class="nav-link" onclick={logout}>{$_('navigation.logout')}</a>
                 </li>
             </ul>
         </div>

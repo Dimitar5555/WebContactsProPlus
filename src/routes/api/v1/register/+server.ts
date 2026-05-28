@@ -1,3 +1,4 @@
+import { $_ } from '$lib/server/i18n';
 import { database } from '$lib/database';
 import { json } from '@sveltejs/kit';
 import bcrypt from 'bcrypt';
@@ -12,7 +13,7 @@ export async function POST({ request }: { request: Request }) {
     if (!username || !password || !email) {
         return json({
             success: false,
-            message: 'Липсва потребителско име, имейл или парола'
+            message: $_('api.register.missing_credentials')
         });
     }
 
@@ -21,13 +22,13 @@ export async function POST({ request }: { request: Request }) {
     if (existingUserByEmail || existingUserByUsername) {
         return json({
             success: false,
-            message: 'Потребител с това потребителско име или имейл вече съществува'
+            message: $_('api.register.exists')
         });
     }
 
     await database.users.create({ username, password: hashedPassword, email });
     return json({
         success: true,
-        message: 'Потребителят беше регистриран успешно'
+        message: $_('api.register.success_registration')
     });
 }

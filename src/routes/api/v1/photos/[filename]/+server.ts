@@ -1,3 +1,4 @@
+import { $_ } from '$lib/server/i18n';
 import fs from 'fs';
 import path from 'path';
 import { uploadDir } from '$lib/server/upload.js';
@@ -19,7 +20,7 @@ export function GET({ params }) {
     const filePath = path.join(uploadDir, params.filename);
 
     if (filename.includes('..') || !fs.existsSync(filePath) || !fs.statSync(filePath).isFile()) {
-        return new Response('Not Found', { status: 404 });
+        return new Response($_('api.photos.not_found'), { status: 404 });
     }
 
     const ext = path.extname(params.filename).toLowerCase();
