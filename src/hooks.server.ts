@@ -11,14 +11,14 @@ import { JWT_SECRET } from '$env/static/private';
 const first: Handle = async ({ event, resolve }) => {
 	const lang = event.cookies.get('lang')
 	if(lang) {
-		locale.set(lang)
+		locale.set(lang);
 	}
 	return resolve(event);
 }
 
 const second: Handle = async ({ event, resolve, reject }) => {
     const pathname = event.url.pathname;
-    const publicPaths = ['/login', '/register', '/about', '/favicon.ico', '/api/v1/login', '/api/v1/register'];
+    const publicPaths = ['/login', '/register', '/about', '/favicon.png', '/api/v1/login', '/api/v1/register'];
     const isPublic = publicPaths.includes(pathname);
     if(isPublic) {
         console.log('Public path accessed:', pathname);
