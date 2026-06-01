@@ -1,5 +1,5 @@
 <script lang="ts">
-	// import favicon from '$lib/assets/favicon.svg';
+	import favicon from '$lib/assets/favicon.png';
  	import 'bootstrap/dist/css/bootstrap.css';
     import scriptSrc from 'bootstrap/dist/js/bootstrap.bundle.js?url';
 	import 'bootstrap-icons/font/bootstrap-icons.css';
@@ -8,7 +8,7 @@
 </script>
 
 <svelte:head>
-	<!-- <link rel="icon" href={favicon} /> -->
+	<link rel="icon" href={favicon} />
 	<script src={scriptSrc}></script>
 </svelte:head>
 
