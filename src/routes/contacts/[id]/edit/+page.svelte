@@ -5,8 +5,7 @@ import {_} from 'svelte-i18n';
     import MessageBox from '$lib/components/MessageBox.svelte';
     import type { PageProps } from './$types';
 
-    let messageType = $state('');
-    let message = $state('');
+    let message: Message = $state({ text: null, type: '' });
     let { data }: PageProps = $props();
     let dataState = $state(data);
     let photo_file = $state(null);
@@ -36,20 +35,17 @@ import {_} from 'svelte-i18n';
         Promise.all(api_calls)
         .then(responses => {
             if(responses[0].ok && (responses.length === 1 || responses[1].ok)) {
-                messageType = 'success';
-                message = $_('contacts.success_update');
+                message = { text: $_('contacts.success_update'), type: 'success' };
                 setTimeout(() => {
                     window.location.href = `/contacts/${dataState.contact.id}`;
                 }, 1000);
             }
             else {
-                messageType = 'error';
-                message = $_('contacts.failed_update');
+                message = { text: $_('contacts.failed_update'), type: 'error' };
             }
         })
         .catch(() => {
-            messageType = 'error';
-            message = $_('contacts.failed_update');
+            message = { text: $_('contacts.failed_update'), type: 'error' };
         });
     }
 </script>

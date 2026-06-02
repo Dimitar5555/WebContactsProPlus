@@ -1,12 +1,13 @@
 <script lang="ts">
-    let { message, messageType }: { message: string | null, messageType: string } = $props();
+    let { message }: { message: Message } = $props();
 </script>
+{#if message.text !== null}
 <div 
     class="alert"
-    class:alert-success={messageType === 'success'}
-    class:alert-danger={messageType === 'error'}
-    class:d-none={message === null}
+    class:alert-success={message.type === 'success'}
+    class:alert-danger={message.type === 'error'}
     role="alert"
     >
-    {message}
+    {message.text}
 </div>
+{/if}

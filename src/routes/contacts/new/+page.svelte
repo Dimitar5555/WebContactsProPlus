@@ -3,8 +3,7 @@
     import InternalNavigation from '$lib/components/InternalNavigation.svelte';
     import MessageBox from "$lib/components/MessageBox.svelte";
 
-    let message = $state('');
-    let messageType = $state('');
+    let message: Message = $state({ text: null, type: '' });
     let dataState = $state({
         contact: {
             first_name: '',
@@ -45,15 +44,13 @@
             return data;
         })
         .then((data) => {
-            message = data.message;
-            messageType = 'success';
+            message = { text: data.message, type: 'success' };
             setTimeout(() => {
                 window.location.href = `/contacts/${data.contactId}`;
             }, 1000);
         })
         .catch((err) => {
-            message = err;
-            messageType = 'error';
+            message = { text: err, type: 'error' };
         });
     }
 </script>

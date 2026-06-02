@@ -32,3 +32,8 @@ type ContactWithPhones = {
 	contact: Contact;
 	phones: PhoneNumber[];
 };
+
+type Message = {
+    text: string | null;
+    type: 'success' | 'error' | 'warning' | '';
+};

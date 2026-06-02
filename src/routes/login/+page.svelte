@@ -3,8 +3,7 @@
     import MessageBox from "$lib/components/MessageBox.svelte";
     import { _ } from 'svelte-i18n';
 
-    let message: string | null = $state(null);
-    let messageType: string = $state('');
+    let message: Message = $state({ text: null, type: '' });
     let submitBtn: HTMLButtonElement;
 
     let username: string = $state('');
@@ -37,8 +36,7 @@
             })
 
             const data = await result.json();
-            message = data.message;
-            messageType = data.success ? 'success' : 'error';
+            message = { text: data.message, type: data.success ? 'success' : 'error' };
             if (data.success) {
                 setTimeout(() => {
                     window.location.href = '/contacts';
@@ -46,13 +44,12 @@
             }
         }
         catch (error) {
-            message = 'Грешка при влизане. Моля, опитайте отново.';
-            messageType = 'error';
+            message = { text: 'Грешка при влизане. Моля, опитайте отново.', type: 'error' };
         }
     }
 
     function clearMessage() {
-        message = null;
+        message = { text: null, type: '' };
     }
 </script>
 
@@ -61,7 +58,7 @@
 <div class="d-flex align-items-center justify-content-center h-100">
     <form class="border border-3 py-2 px-3 rounded shadow bg-light" onsubmit={submitLoginForm}>
         <h2 class="text-center">{$_('login.title')}</h2>
-        <MessageBox message={message} messageType={messageType} />
+        <MessageBox message={message} />
         <div class="form-group mb-3">
             <label for="username" class="form-label">{$_('login.username')}</label>
             <input 

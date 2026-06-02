@@ -6,8 +6,7 @@
     let email: string = $state('');    
     let username: string = $state('');
     let password: string = $state('');
-    let message: string | null = $state(null);
-    let messageType: string = $state('');
+    let message: Message = $state({ text: null, type: '' });
 
     function submitRegisterForm(event: Event) {
         event.preventDefault();
@@ -19,12 +18,10 @@
         })
         .then(response => response.json())
         .then(data => {
-            message = data.message;
-            messageType = data.success ? 'success' : 'error';
+            message = { text: data.message, type: data.success ? 'success' : 'error' };
         })
         .catch(error => {
-            message = 'Възникна грешка при регистрацията. Моля, опитайте отново. Грешка: ' + error.message;
-            messageType = 'error';
+            message = { text: 'Възникна грешка при регистрацията. Моля, опитайте отново. Грешка: ' + error.message, type: 'error' };
         });
     }
 </script>
@@ -34,7 +31,7 @@
 <div class="d-flex align-items-center justify-content-center h-100">
     <form class="border border-3 py-2 px-3 rounded shadow bg-light" onsubmit={submitRegisterForm}>
         <h2 class="text-center">{$_('register.title')}</h2>
-        <MessageBox message={message} messageType={messageType} />
+        <MessageBox message={message} />
         <div class="form-group mb-3">
             <label for="email" class="form-label">{$_('register.email')}</label>
             <input type="email" name="email" required bind:value={email} class="form-control">
