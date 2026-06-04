@@ -7,7 +7,7 @@ export async function toggleFavourite(contactId: number): Promise<Message> {
     try {
         const response = await fetch(`/api/v1/contacts/${contactId}/favourite`, { method: 'PATCH' });
         const data = await response.json();
-        if(data.success) {
+        if(response.ok) {
             return {
                 text: data.newState ? 'contacts.marked_favourite' : 'contacts.unmarked_favourite',
                 type: 'success'
