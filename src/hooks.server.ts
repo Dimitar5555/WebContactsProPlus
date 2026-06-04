@@ -20,7 +20,7 @@ const second: Handle = async ({ event, resolve }: any) => {
         try {
             event.locals.user = jwt.verify(token, env.JWT_SECRET) as any;
         }
- catch {
+    catch {
             event.locals.user = null;
             event.cookies.delete('token', { path: '/' });
         }
