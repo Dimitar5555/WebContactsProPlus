@@ -1,19 +1,26 @@
-import { _ } from "svelte-i18n";
-import { get } from 'svelte/store'
+import { _ } from 'svelte-i18n';
+import { get } from 'svelte/store';
 
 const $_ = get(_);
 
 export async function toggleFavourite(contactId: number): Promise<Message> {
     try {
-        const response = await fetch(`/api/v1/contacts/${contactId}/favourite`, { method: 'PATCH' });
+        const response = await fetch(
+            `/api/v1/contacts/${contactId}/favourite`,
+            {
+                method: 'PATCH'
+            }
+        );
         const data = await response.json();
         if(response.ok) {
             return {
-                text: data.newState ? 'contacts.marked_favourite' : 'contacts.unmarked_favourite',
+                text: data.newState
+                    ? 'contacts.marked_favourite'
+                    : 'contacts.unmarked_favourite',
                 type: 'success'
             };
         }
-        else {                
+        else {
             return {
                 text: data.error,
                 type: 'error'

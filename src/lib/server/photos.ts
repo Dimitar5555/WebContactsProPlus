@@ -6,28 +6,33 @@ import sharp from 'sharp';
 export const uploadDir = path.join(process.cwd(), 'photos');
 
 const UPLOADS_LIMIT_BYTES = 5 * 1024 * 1024; // 5 MB
-const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+const ALLOWED_MIME_TYPES = [
+    'image/jpeg',
+    'image/png',
+    'image/gif',
+    'image/webp'
+];
 
 export function createUploadsDir() {
-    if (fs.existsSync(uploadDir)) {
+    if(fs.existsSync(uploadDir)) {
         return;
     }
     try {
         fs.mkdirSync(uploadDir);
-    } 
+    }
     catch (err) {
         console.error('Error creating upload directory:', err);
         process.exit(1);
     }
 }
 
-export function validateFile(blob: Blob): { valid: boolean, error?: string } {
+export function validateFile(blob: Blob): { valid: boolean; error?: string } {
     const type = blob.type;
 
-    if (!ALLOWED_MIME_TYPES.includes(type)) {
+    if(!ALLOWED_MIME_TYPES.includes(type)) {
         return { valid: false, error: 'Only image files are allowed' };
     }
-    if (blob.size > UPLOADS_LIMIT_BYTES) {
+    if(blob.size > UPLOADS_LIMIT_BYTES) {
         return { valid: false, error: 'File size exceeds the 5 MB limit' };
     }
 
@@ -36,7 +41,7 @@ export function validateFile(blob: Blob): { valid: boolean, error?: string } {
 
 export async function saveFile(blob: Blob): Promise<string> {
     const mime = blob.type;
-    const mapping: Record<string,string> = {
+    const mapping: Record<string, string> = {
         'image/jpeg': 'jpg',
         'image/jpg': 'jpg',
         'image/png': 'png',
@@ -72,14 +77,14 @@ export async function deletePhoto(filename: string) {
     const thumbPath = path.join(uploadDir, `thumb_${filename}`);
     let success = true;
 
-    await fs.unlink(filePath, (err) => {
-        if (err) {
+    await fs.unlink(filePath, err => {
+        if(err) {
             console.error('Failed to delete file:', err);
             success = false;
         }
     });
-    await fs.unlink(thumbPath, (err) => {
-        if (err) {
+    await fs.unlink(thumbPath, err => {
+        if(err) {
             console.error('Failed to delete thumbnail:', err);
             success = false;
         }

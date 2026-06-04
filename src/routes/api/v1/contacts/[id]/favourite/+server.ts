@@ -9,13 +9,13 @@ export async function PATCH({ locals, params }) {
     try {
         const contactId = Number(params.id);
 
-        if (isNaN(contactId)) {
+        if(isNaN(contactId)) {
             return error(400, 'api.generic.invalid_id');
         }
 
         const contact = await database.contacts.findById(contactId);
 
-        if (!contact || contact.user_id !== user.id) {
+        if(!contact || contact.user_id !== user.id) {
             return error(404, 'api.generic.not_found');
         }
         oldState = Boolean(contact.is_favourite);

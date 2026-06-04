@@ -5,7 +5,7 @@
             "invalid_credentials": "Invalid username or password",
             "success": "Login successful"
         },
-        "contacts" : {
+        "contacts": {
             "invalid_id": "Invalid id",
             "contact_not_found": "Contact was not found",
             "server_error": "Failed to fetch contact",
@@ -18,14 +18,13 @@
             "failed_fetch": "Failed to fetch contacts",
             "failed_create": "Failed to create contact"
         },
-        "photos" : {
-           "not_found": "Not Found"
+        "photos": {
+            "not_found": "Not Found"
         },
         "register": {
             "missing_credentials": "Missing username, email or password",
             "exists": "User with that username already exists",
             "success_registration": "The user was successfully registered"
-
         }
     },
     "navigation": {
@@ -57,12 +56,11 @@
     },
     "contact": {
         "not_found": "Contact was not found"
-
     },
     "contacts": {
         "add": "Add Contact",
         "my_contacts": "My Contacts",
-        "edit" : {
+        "edit": {
             "success_update": "Contact updated successfully",
             "failed_update": "Failed to update contact",
             "not_found": "Contact was not found",
@@ -76,10 +74,8 @@
         "save": "Save",
         "photo_alt": "Contact photo",
         "is_favourite": "This contact is a favourite.",
-        "notes": "Notes",  
+        "notes": "Notes",
         "back": "Back",
         "delete": "Delete"
     }
-
-  
 }

@@ -4,10 +4,10 @@ import { uploadDir } from '$lib/server/photos.js';
 import { error } from '@sveltejs/kit';
 
 const MIME: Record<string, string> = {
-    '.jpg':  'image/jpeg',
+    '.jpg': 'image/jpeg',
     '.jpeg': 'image/jpeg',
-    '.png':  'image/png',
-    '.gif':  'image/gif',
+    '.png': 'image/png',
+    '.gif': 'image/gif',
     '.webp': 'image/webp'
 };
 
@@ -27,11 +27,14 @@ export function GET({ params }) {
 
     const uploadRoot = path.resolve(uploadDir);
     const resolvedPath = path.resolve(uploadRoot, decoded);
-    if (!resolvedPath.startsWith(uploadRoot + path.sep) && resolvedPath !== uploadRoot) {
+    if(
+        !resolvedPath.startsWith(uploadRoot + path.sep) &&
+        resolvedPath !== uploadRoot
+    ) {
         return error(404, 'api.photos.not_found');
     }
 
-    if (!fs.existsSync(resolvedPath) || !fs.statSync(resolvedPath).isFile()) {
+    if(!fs.existsSync(resolvedPath) || !fs.statSync(resolvedPath).isFile()) {
         return error(404, 'api.photos.not_found');
     }
 

@@ -3,6 +3,7 @@
 This is a group project for the Web Technologies course at Faculty of Mathematics and Informatics, Sofia University. The project is a contact management application built on top of SvelteKit, with a SQLite database for storing user data, contacts, and tags. The application allows users to create an account, log in, manage their contacts.
 
 ## Features
+
 - User authentication (registration and login)
 - CRUD operations for contacts
 - Tagging system for contacts
@@ -11,6 +12,7 @@ This is a group project for the Web Technologies course at Faculty of Mathematic
 - Responsive design for mobile and desktop
 
 ## Architecture
+
 - Frontend: SvelteKit + Bootstrap
 - Backend: Node.js with Express
 - Database: SQLite

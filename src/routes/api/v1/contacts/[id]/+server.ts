@@ -8,18 +8,18 @@ export async function GET({ params, locals }) {
     try {
         const contactId = Number(params.id);
 
-        if (isNaN(contactId)) {
+        if(isNaN(contactId)) {
             return error(400, 'api.generic.invalid_id');
         }
 
         const contact = await database.contacts.findById(contactId);
 
-        if (!contact || contact.user_id !== user.id) {
+        if(!contact || contact.user_id !== user.id) {
             return error(404, 'api.generic.not_found');
         }
 
         return json(contact, { status: 200 });
-    } 
+    }
     catch (err) {
         return error(500, 'api.generic.server_error');
     }
@@ -32,13 +32,13 @@ export async function PUT({ params, request, locals }: any) {
         const body: any = await request.json();
         const { first_name, last_name, notes } = body;
 
-        if (isNaN(contactId) || !first_name || !last_name) {
+        if(isNaN(contactId) || !first_name || !last_name) {
             return error(400, 'api.generic.missing_fields');
         }
 
         const contact = await database.contacts.findById(contactId);
 
-        if (!contact || contact.user_id !== user.id) {
+        if(!contact || contact.user_id !== user.id) {
             return error(404, 'api.generic.not_found');
         }
 
@@ -48,14 +48,16 @@ export async function PUT({ params, request, locals }: any) {
             notes
         });
 
-        const phoneNumbers: any[] = await database.phoneNumbers.findByContactId(contactId);
+        const phoneNumbers: any[] =
+            await database.phoneNumbers.findByContactId(contactId);
         const existingPhoneNumberIds = phoneNumbers.map((pn: any) => pn.id);
-        const incomingPhoneNumberIds = (body.phone_numbers || []).map((pn: any) => pn.id).filter((id: any) => id !== undefined);
+        const incomingPhoneNumberIds = (body.phone_numbers || [])
+            .map((pn: any) => pn.id)
+            .filter((id: any) => id !== undefined);
 
-
-        for (const pn of (body.phone_numbers || [])) {
+        for (const pn of body.phone_numbers || []) {
             const item: any = pn;
-            if (item.id && existingPhoneNumberIds.includes(item.id)) {
+            if(item.id && existingPhoneNumberIds.includes(item.id)) {
                 await database.phoneNumbers.update(item.id, {
                     phone_number: item.phone_number,
                     label: item.label
@@ -71,13 +73,16 @@ export async function PUT({ params, request, locals }: any) {
         }
 
         for (const existingId of existingPhoneNumberIds) {
-            if (!incomingPhoneNumberIds.includes(existingId)) {
+            if(!incomingPhoneNumberIds.includes(existingId)) {
                 await database.phoneNumbers.delete(existingId);
             }
         }
 
-        return json({ message: 'api.contacts.success_update' }, { status: 200 });
-    } 
+        return json(
+            { message: 'api.contacts.success_update' },
+            { status: 200 }
+        );
+    }
     catch (err) {
         return error(500, 'api.contacts.failed_update');
     }
@@ -88,13 +93,13 @@ export async function DELETE({ params, locals }) {
     try {
         const contactId = Number(params.id);
 
-        if (isNaN(contactId)) {
+        if(isNaN(contactId)) {
             return error(400, 'api.generic.invalid_id');
         }
 
         const contact = await database.contacts.findById(contactId);
-        
-        if (!contact || contact.user_id !== user.id) {
+
+        if(!contact || contact.user_id !== user.id) {
             return error(404, 'api.generic.not_found');
         }
 
@@ -104,8 +109,11 @@ export async function DELETE({ params, locals }) {
 
         await database.contacts.delete(contactId);
 
-        return json({ message: 'api.contacts.success_delete' }, { status: 200 });
-    } 
+        return json(
+            { message: 'api.contacts.success_delete' },
+            { status: 200 }
+        );
+    }
     catch (err) {
         return error(500, 'api.generic.server_error');
     }
