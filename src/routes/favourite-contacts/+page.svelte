@@ -2,12 +2,14 @@
     import { _ } from 'svelte-i18n';
     import type { PageProps } from './$types';
     import { ContactStore } from '$lib/state/contacts.svelte.ts';
+    import { ToastStore } from '$lib/state/toasts.svelte.ts';
     import InternalNavigation from '$lib/components/InternalNavigation.svelte';
     import Contacts from '$lib/components/Contacts.svelte';
+    import ToastPanel from '$lib/components/ToastPanel.svelte';
 
     let { data }: PageProps = $props();
-
-    let store = new ContactStore(data.contacts);
+    const toastStore = new ToastStore();
+    let store = new ContactStore(data.contacts, toastStore);
 </script>
 
 <InternalNavigation />
@@ -16,3 +18,4 @@
     <h1>{$_('favourite_contacts.title')}</h1>
     <Contacts {store} />
 </div>
+<ToastPanel data={toastStore} />

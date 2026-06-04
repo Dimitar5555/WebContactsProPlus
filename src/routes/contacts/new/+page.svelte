@@ -1,10 +1,11 @@
 <script lang="ts">
     import ContactForm from '$lib/components/ContactForm.svelte';
     import InternalNavigation from '$lib/components/InternalNavigation.svelte';
-    import MessageBox from "$lib/components/MessageBox.svelte";
+    import ToastPanel from '$lib/components/ToastPanel.svelte';
+    import { ToastStore } from '$lib/state/toasts.svelte';
     import { _ } from 'svelte-i18n';
 
-    let message: Message = $state({ text: null, type: '' });
+    const toastStore = new ToastStore();
     let dataState = $state({
         contact: {
             first_name: '',
@@ -29,7 +30,7 @@
             });
             const contactsData = await contactsRes.json();
             if(!contactsRes.ok) {
-                message = { text: contactsData.message, type: 'error' };
+                toastStore.add(contactsData.message, 'error');
                 return;
             }
             if(photo_file) {
@@ -39,17 +40,17 @@
                 });
                 const photoData = await photoRes.json();
                 if(!photoRes.ok) {
-                    message = { text: photoData.message, type: 'error' };
+                    toastStore.add(photoData.message, 'error');
                     return;
                 }
             }
-            message = { text: contactsData.message, type: 'success' };
+            toastStore.add(contactsData.message, 'success');
             setTimeout(() => {
                 window.location.href = `/contacts/${contactsData.contactId}`;
             }, 1000);
         }
         catch(err) {
-            message = { text: 'contacts.errors.create', type: 'error' };
+            toastStore.add('contacts.errors.create', 'error');
             return;
         }
     }
@@ -59,7 +60,6 @@
 
 <div class="container bg-white p-4 mt-3 rounded shadow">
     <form onsubmit={handleSubmit}>
-        <MessageBox message={message} />
         <ContactForm
             bind:data={dataState}
             bind:photo_file={photo_file}
@@ -68,3 +68,4 @@
         />
     </form>
 </div>
+<ToastPanel data={toastStore} />

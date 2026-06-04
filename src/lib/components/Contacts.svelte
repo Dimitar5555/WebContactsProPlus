@@ -1,6 +1,5 @@
 <script lang="ts">
     import { _ } from "svelte-i18n";
-    import MessageBox from "./MessageBox.svelte";
     import { ContactStore } from "$lib/state/contacts.svelte.ts";
 
     let { store }: { store: ContactStore } = $props();
@@ -20,7 +19,6 @@
     let browser = { h: 0, w: 0 }
     // showMenu is state of context-menu visibility
     let showMenu = $state(false);
-    let message: Message = $state({ text: null, type: '' });
     let menuItems = [
         {
             'name': 'view',
@@ -53,16 +51,10 @@
     ];
     let currentContactId: number = $state(0);
     async function handleFavourite() {
-        message = await store.toggleFav(currentContactId);
-        setTimeout(() => {
-            message = { text: null, type: '' };
-        }, 3000);
+        await store.toggleFav(currentContactId);
     }
     async function handleDelete() {
-        message = await store.delete(currentContactId);
-        setTimeout(() => {
-            message = { text: null, type: '' };
-        }, 3000);
+        await store.delete(currentContactId);
     }
     function rightClickContextMenu(e: MouseEvent) {
         e.preventDefault();
@@ -202,7 +194,6 @@
 {/if}
 
 <input type="text" placeholder="Търсене..." bind:value={searchQuery} class="form-control mb-3" />
-<MessageBox message={message} />
 {#if filteredContacts.length > 0}
     <div>
         {#each filteredContacts as contact}

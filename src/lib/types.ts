@@ -29,9 +29,11 @@ type ContactWithPhones = {
     phones: PhoneNumber[];
 };
 
-type Message = {
-    text: string | null;
-    type: 'success' | 'error' | 'warning' | '';
+type Toast = {
+    id: number;
+    message: string;
+    type: 'success' | 'warning' | 'error';
+    timeoutId: number;
 };
 
 type ApiResponse<T> = {

@@ -2,11 +2,12 @@
     import { _ } from 'svelte-i18n';
     import ContactForm from '$lib/components/ContactForm.svelte';
     import InternalNavigation from '$lib/components/InternalNavigation.svelte';
-    import MessageBox from '$lib/components/MessageBox.svelte';
     import type { PageProps } from './$types';
     import BackButton from '$lib/components/BackButton.svelte';
+    import { ToastStore } from '$lib/state/toasts.svelte';
+    import ToastPanel from '$lib/components/ToastPanel.svelte';
 
-    let message: Message = $state({ text: null, type: '' });
+    const toastStore = new ToastStore();
     let { data }: PageProps = $props();
     let dataState = $state(data);
     let photo_file = $state(null);
@@ -36,18 +37,18 @@
         }
         try {
             if(contactsRes.ok && secondaryRes) {
-                message = { text: 'contacts.success_update', type: 'success' };
+                const contactsData = await contactsRes.json();
+                toastStore.add('contacts.success_update', 'success');
                 setTimeout(() => {
                     window.location.href = `/contacts/${dataState.contact.id}`;
                 }, 1000);
             }
             else {
-                message = { text: 'contacts.failed_update', type: 'error' };
+                toastStore.add('contacts.failed_update', 'error');
             }
         }
-        // })
         catch(err) {
-            message = { text: 'contacts.failed_update', type: 'error' };
+            toastStore.add('contacts.failed_update', 'error');
         }
     }
 </script>
@@ -60,7 +61,6 @@
         <p>{$_('contact.not_found')}</p>
     {:else}
         <form onsubmit={submitForm}>
-            <MessageBox message={message} />
             <ContactForm 
                 bind:data={dataState}
                 bind:photo_file={photo_file}
@@ -70,3 +70,4 @@
         </form>
     {/if}
 </div>
+<ToastPanel data={toastStore} />

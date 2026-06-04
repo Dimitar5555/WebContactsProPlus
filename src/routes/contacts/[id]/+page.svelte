@@ -1,25 +1,25 @@
 <script lang="ts">
     import { _ } from 'svelte-i18n';
     import InternalNavigation from '$lib/components/InternalNavigation.svelte';
-    import MessageBox from '$lib/components/MessageBox.svelte';
     import type { PageProps } from './$types';
     import { deleteContact } from "$lib/api/contacts";
     import Button from '$lib/components/Button.svelte';
     import EditButton from '$lib/components/EditButton.svelte';
     import BackButton from '$lib/components/BackButton.svelte';
+    import ToastPanel from '$lib/components/ToastPanel.svelte';
+    import { ToastStore } from '$lib/state/toasts.svelte';
 
-    let message: Message = $state({ text: null, type: '' });
+    const toastStore = new ToastStore();
     async function handleDelete(contactId: number) {
-        message = await deleteContact(contactId);
-        if(message.type === 'success') {
+        const result = await deleteContact(contactId);
+        if(result.type === 'success') {
+            toastStore.add(result.text, 'success');
             setTimeout(() => {
                 window.location.href = '/contacts';
             }, 3000);
         }
         else {
-            setTimeout(() => {
-                message = { text: null, type: '' };
-            }, 3000);
+            toastStore.add(result.text, 'error');
         }
     }
 
@@ -43,7 +43,6 @@
             onClick={() => handleDelete(contact.id)}
             icon="bi-trash3-fill"
         />
-        <MessageBox message={message} />
         <img 
             src={`/api/v1/photos/${contact.photo_url}`}
             alt={$_('contacts.photo_alt')}
@@ -65,3 +64,4 @@
         {/if}
     {/if}
 </div>
+<ToastPanel data={toastStore} />

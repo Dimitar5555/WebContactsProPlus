@@ -1,9 +1,10 @@
 <script lang="ts">
     import ExternalNavigation from "$lib/components/ExternalNavigation.svelte";
-    import MessageBox from "$lib/components/MessageBox.svelte";
+    import ToastPanel from "$lib/components/ToastPanel.svelte";
+    import { ToastStore } from "$lib/state/toasts.svelte";
     import { _ } from 'svelte-i18n';
 
-    let message: Message = $state({ text: null, type: '' });
+    const toastStore = new ToastStore();
     let submitBtn: HTMLButtonElement;
 
     let username: string = $state('');
@@ -35,7 +36,7 @@
                 body: formData
             });
             const data = await res.json();
-            message = { text: data.message, type: res.ok ? 'success' : 'error' };
+            toastStore.add(data.message, res.ok ? 'success' : 'error');
             if (res.ok) {
                 setTimeout(() => {
                     window.location.href = '/contacts';
@@ -43,12 +44,8 @@
             }
         }
         catch (error) {
-            message = { text: 'login.error', type: 'error' };
+            toastStore.add('login.error', 'error');
         }
-    }
-
-    function clearMessage() {
-        message = { text: null, type: '' };
     }
 </script>
 
@@ -57,7 +54,6 @@
 <div class="d-flex align-items-center justify-content-center h-100">
     <form class="border border-3 py-2 px-3 rounded shadow bg-light" onsubmit={submitLoginForm}>
         <h2 class="text-center">{$_('login.title')}</h2>
-        <MessageBox message={message} />
         <div class="form-group mb-3">
             <label for="username" class="form-label">{$_('login.username')}</label>
             <input 
@@ -65,7 +61,6 @@
             name="username"
             required
             bind:value={username}
-            onkeyup={clearMessage}
             class="form-control"
             >
         </div>
@@ -76,7 +71,6 @@
             name="password"
             required
             bind:value={password}
-            onkeyup={clearMessage}
             class="form-control"
             >
         </div>
@@ -103,3 +97,4 @@
         <p class="mt-3 text-muted text-center">{$_('login.registerPrompt')} <a href="/register">{$_('login.registerLink')}</a></p>
     </form>
 </div>
+<ToastPanel data={toastStore} />
