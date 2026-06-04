@@ -87,9 +87,9 @@ export const database = {
             return rows.map(mapContact);
         },
 
-        findById: async (id: number, userId: number): Promise<any | undefined> => {
-            const stmt = db.prepare('SELECT * FROM contacts WHERE id = ? AND user_id = ?');
-            const row = stmt.get(id, userId);
+        findById: async (id: number): Promise<any | undefined> => {
+            const stmt = db.prepare('SELECT * FROM contacts WHERE id = ?');
+            const row = stmt.get(id);
 
             return mapContact(row);
         },
@@ -100,18 +100,23 @@ export const database = {
             return result.lastInsertRowid as number;
         },
 
-        update: async (id: number, userId: number, { first_name, last_name, is_favourite, notes }: any): Promise<void> => {
+        update: async (id: number, { first_name, last_name, is_favourite, notes }: any): Promise<void> => {
             const stmt = db.prepare(`
                 UPDATE contacts 
                 SET first_name = ?, last_name = ?, is_favourite = ?, notes = ? 
-                WHERE id = ? AND user_id = ?
+                WHERE id = ?
             `);
-            stmt.run(first_name, last_name, is_favourite ? 1 : 0, notes, id, userId);
+            stmt.run(first_name, last_name, is_favourite ? 1 : 0, notes, id);
         },
 
-        delete: async (id: number, userId: number): Promise<void>  => {
-            const stmt = db.prepare('DELETE FROM contacts WHERE id = ? AND user_id = ?');
-            stmt.run(id, userId);
+        delete: async (id: number): Promise<void>  => {
+            const stmt = db.prepare('DELETE FROM contacts WHERE id = ?');
+            stmt.run(id);
+        },
+
+        toggleFavourite: async (id: number, newState: boolean) => {
+            const stmt = db.prepare('UPDATE contacts SET is_favourite = ? WHERE id = ?');
+            stmt.run(newState ? 1 : 0, id);
         }
     },
 

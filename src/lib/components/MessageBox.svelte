@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { _ } from 'svelte-i18n';
     let { message }: { message: Message } = $props();
 </script>
 {#if message.text !== null}
@@ -8,6 +9,6 @@
     class:alert-danger={message.type === 'error'}
     role="alert"
     >
-    {message.text}
+    {$_(message.text)}
 </div>
 {/if}

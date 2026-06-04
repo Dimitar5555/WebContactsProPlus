@@ -9,13 +9,13 @@ export async function toggleFavourite(contactId: number): Promise<Message> {
         const data = await response.json();
         if(data.success) {
             return {
-                text: data.newState ? $_('contacts.marked_favourite') : $_('contacts.unmarked_favourite'),
+                text: data.newState ? 'contacts.marked_favourite' : 'contacts.unmarked_favourite',
                 type: 'success'
             };
         }
         else {                
             return {
-                text: $_(data.error),
+                text: data.error,
                 type: 'error'
             };
         }
@@ -31,7 +31,7 @@ export async function toggleFavourite(contactId: number): Promise<Message> {
 export async function deleteContact(contactId: number): Promise<Message> {
     if(!confirm($_('contacts.confirm_delete'))) {
         return {
-            text: $_('contacts.delete_cancelled'),
+            text: 'contacts.delete_cancelled',
             type: 'error'
         };
     }
@@ -43,7 +43,7 @@ export async function deleteContact(contactId: number): Promise<Message> {
 
         if(contactRes.ok) {
             return {
-                text: $_('contacts.delete_success'),
+                text: 'contacts.delete_success',
                 type: 'success'
             };
         }
@@ -51,7 +51,7 @@ export async function deleteContact(contactId: number): Promise<Message> {
     }
     catch (error) {
         return {
-            text: $_('contacts.delete_error1'),
+            text: 'contacts.delete_error1',
             type: 'error'
         };
     }

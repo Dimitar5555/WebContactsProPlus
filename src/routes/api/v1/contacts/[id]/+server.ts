@@ -1,53 +1,47 @@
-import { json } from '@sveltejs/kit';
+import { json, error } from '@sveltejs/kit';
 import { database } from '$lib/database';
-import {$_} from '$lib/server/i18n.js'
+import { getAuthenticatedUser } from '$lib/server/auth.js';
 
 export async function GET({ params, locals }) {
-    if(!locals.user) {
-        return json({ error: $_('api.contacts.unauthorized_user') }, { status: 401 });
-    }
-    const userId = locals.user.id;
+    const user = getAuthenticatedUser(locals);
     try {
         const contactId = Number(params.id);
 
         if (isNaN(contactId)) {
-            return json({ error: $_('api.contacts.invalid_id') }, { status: 400 });
+            return error(400, 'api.generic.invalid_id');
         }
 
-        const contact = await database.contacts.findById(contactId, userId);
+        const contact = await database.contacts.findById(contactId);
 
-        if (!contact || contact.user_id !== userId) {
-            return json({ error: $_('api.contacts.contact_not_found') }, { status: 404 });
+        if (!contact || contact.user_id !== user.id) {
+            return error(404, 'api.generic.not_found');
         }
 
         return json(contact, { status: 200 });
     } 
-    catch (error) {
-        return json({ error: $_('api.contacts.server_error') }, { status: 500 });
+    catch (err) {
+        return error(500, 'api.generic.server_error');
     }
 }
 
 export async function PUT({ params, request, locals }: any) {
-    if(!locals.user) {
-        return json({ error: $_('api.contacts.unauthorized_user') }, { status: 401 });
-    }
-    const userId = locals.user.id;
+    const user = getAuthenticatedUser(locals);
     try {
         const contactId = Number(params.id);
         const body: any = await request.json();
         const { first_name, last_name, notes } = body;
 
         if (isNaN(contactId) || !first_name || !last_name) {
-            return json({ error: $_('api.contacts.missing_fields') }, { status: 400 });
+            return error(400, 'api.generic.missing_fields');
         }
 
-        const contact = await database.contacts.findById(contactId, userId);
+        const contact = await database.contacts.findById(contactId);
 
-        if (!contact || contact.user_id !== userId) {
-            return json({ error: $_('api.contacts.contact_not_found') }, { status: 404 });
+        if (!contact || contact.user_id !== user.id) {
+            return error(404, 'api.generic.not_found');
         }
 
-        await database.contacts.update(contactId, userId, {
+        await database.contacts.update(contactId, {
             first_name,
             last_name,
             notes
@@ -81,36 +75,33 @@ export async function PUT({ params, request, locals }: any) {
             }
         }
 
-        return json({ message: $_('api.contacts.success_update') }, { status: 200 });
+        return json({ message: 'api.contacts.success_update' }, { status: 200 });
     } 
-    catch (error) {
-        return json({ error: $_('api.contacts.failed_update') }, { status: 500 });
+    catch (err) {
+        return error(500, 'api.contacts.failed_update');
     }
 }
 
 export async function DELETE({ params, locals }) {
-    if(!locals.user) {
-        return json({ error: $_('api.contacts.unauthorized_user') }, { status: 401 });
-    }
-    const userId = locals.user.id;
+    const user = getAuthenticatedUser(locals);
     try {
         const contactId = Number(params.id);
 
         if (isNaN(contactId)) {
-            return json({ error: $_('api.contacts.unauthorized_user') }, { status: 400 });
+            return error(400, 'api.generic.invalid_id');
         }
 
-        const contact = await database.contacts.findById(contactId, userId);
+        const contact = await database.contacts.findById(contactId);
         
-        if (!contact || contact.user_id !== userId) {
-            return json({ error: $_('api.contacts.contact_not_found') }, { status: 404 });
+        if (!contact || contact.user_id !== user.id) {
+            return error(404, 'api.generic.not_found');
         }
 
-        await database.contacts.delete(contactId, userId);
+        await database.contacts.delete(contactId);
 
-        return json({ message: $_('api.contacts.success_delete') }, { status: 200 });
+        return json({ message: 'api.contacts.success_delete' }, { status: 200 });
     } 
-    catch (error) {
-        return json({ error: $_('api.contacts.failed_delete') }, { status: 500 });
+    catch (err) {
+        return error(500, 'api.generic.server_error');
     }
 }

@@ -1,36 +1,30 @@
-import { $_ } from '$lib/server/i18n';
-import { json } from '@sveltejs/kit';
+import { json, error } from '@sveltejs/kit';
 import { database } from '$lib/database';
+import { getAuthenticatedUser } from '$lib/server/auth.js';
 
 export async function GET({ locals }) {
-    if(!locals.user) {
-        return json({ error: $_('contacts.unauthorized') }, { status: 401 });
-    }
-    const userId = locals.user.id;
+    const user = getAuthenticatedUser(locals);
     try {
-        const contacts = await database.contacts.findMany({ userId });
-        return json(contacts, { status: 200 });
+        const contacts = await database.contacts.findMany({ userId: user.id });
+        return json({ contacts }, { status: 200 });
     } 
-    catch (error) {
-        return json({ error: $_('contacts.failed_fetch') }, { status: 500 });
+    catch (err) {
+        return error(500, 'api.generic.server_error');
     }
 }
 
 export async function POST({ request, locals }) {
-    if(!locals.user) {
-        return json({ error: $_('contacts.unauthorized') }, { status: 401 });
-    }
-    const userId = locals.user.id;
+    const user = getAuthenticatedUser(locals);
     try {
         const body = await request.json();
         const { first_name, last_name, notes } = body;
 
         if (!first_name || !last_name) {
-            return json({ error: $_('contacts.missing_fields') }, { status: 400 });
+            return error(400, 'api.contacts.missing_fields');
         }
 
         const newContactId = await database.contacts.create({
-            user_id: userId,
+            user_id: user.id,
             first_name,
             last_name,
             notes
@@ -49,12 +43,12 @@ export async function POST({ request, locals }) {
         }
 
         return json({ 
-            message: $_('contacts.success_create'), 
+            message: 'contacts.success_create', 
             contactId: newContactId 
         }, { status: 201 });
 
     }
-    catch (error) {
-        return json({ error: $_('contacts.failed_create') }, { status: 500 });
+    catch (err) {
+        return error(500, 'api.generic.server_error');
     }
 }

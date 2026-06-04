@@ -1,6 +1,7 @@
 <script lang="ts">
     import { _ } from "svelte-i18n";
     import MessageBox from "./MessageBox.svelte";
+    import { ContactStore } from "$lib/state/contacts.svelte.ts";
 
     let { store }: { store: ContactStore } = $props();
     let searchQuery: string = $state('');
@@ -36,7 +37,7 @@
         {
             'name': 'favourite',
             'onClick': () => handleFavourite(),
-            'displayTextFunction': (contact) => contact.is_favourite ? $_('contacts.actions.unfavourite') : $_('contacts.actions.favourite'),
+            'displayTextFunction': (contact: Contact) => contact.is_favourite ? $_('contacts.actions.unfavourite') : $_('contacts.actions.favourite'),
             'displayText': false,
             'class': 'bi bi-heart-fill'
         },
@@ -92,7 +93,7 @@
         showMenu = false;
     }
 
-    function getContextMenuDimension(node){
+    function getContextMenuDimension(node: HTMLElement) {
         // This function will get context menu dimension
         // when navigation is shown => showMenu = true
         let height = node.offsetHeight

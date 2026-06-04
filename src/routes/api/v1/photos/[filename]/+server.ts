@@ -1,7 +1,7 @@
-import { $_ } from '$lib/server/i18n';
 import fs from 'fs';
 import path from 'path';
 import { uploadDir } from '$lib/server/upload.js';
+import { error } from '@sveltejs/kit';
 
 const MIME: Record<string, string> = {
     '.jpg':  'image/jpeg',
@@ -28,11 +28,11 @@ export function GET({ params }) {
     const uploadRoot = path.resolve(uploadDir);
     const resolvedPath = path.resolve(uploadRoot, decoded);
     if (!resolvedPath.startsWith(uploadRoot + path.sep) && resolvedPath !== uploadRoot) {
-        return new Response($_('api.photos.not_found'), { status: 404 });
+        return error(404, 'api.photos.not_found');
     }
 
     if (!fs.existsSync(resolvedPath) || !fs.statSync(resolvedPath).isFile()) {
-        return new Response($_('api.photos.not_found'), { status: 404 });
+        return error(404, 'api.photos.not_found');
     }
 
     const ext = path.extname(resolvedPath).toLowerCase();

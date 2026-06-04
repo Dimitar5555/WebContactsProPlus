@@ -1,10 +1,8 @@
-import { $_ } from '$lib/server/i18n';
-
 import { type Cookies } from '@sveltejs/kit';
 import { database } from '$lib/database';
 import jwt from 'jsonwebtoken';
 import * as env from '$env/static/private';
-import { json } from '@sveltejs/kit';
+import { json, error } from '@sveltejs/kit';
 import bcrypt from 'bcrypt';
 
 export async function POST({ request, cookies }: { request: Request, cookies: Cookies }) {
@@ -13,12 +11,12 @@ export async function POST({ request, cookies }: { request: Request, cookies: Co
     const password = data.get('password')?.toString() ?? '';
 
     if (!username || !password) {
-        return json({ success: false, message: $_('api.login.missing_credentials') });
+        return error(400, 'api.login.missing_credentials');
     }
 
     const user = await database.users.findByUsername(username);
     if (!user || !bcrypt.compareSync(password, user.password)) {
-        return json({ success: false, message: $_('api.login.invalid_credentials') });
+        return error(401, 'api.login.invalid_credentials');
     }
 
     const token = { id: user.id, username: user.username };
@@ -32,5 +30,5 @@ export async function POST({ request, cookies }: { request: Request, cookies: Co
         path: '/'
     } as any);
 
-    return json({ success: true, message: $_('api.login.success') });
+    return json({ message: 'api.login.success' });
 }

@@ -1,8 +1,9 @@
-import { json } from '@sveltejs/kit';
+import { json, error } from '@sveltejs/kit';
 import { createUploadsDir, validateFile, saveFile, uploadDir } from '$lib/server/upload.js';
 import path from 'path';
 import { database } from '$lib/database';
 import fs from 'fs';
+import { getAuthenticatedUser } from '$lib/server/auth';
 
 
 createUploadsDir();
@@ -12,27 +13,28 @@ createUploadsDir();
  * Expects a photo file in the request body and saves it to disk, returning its URL.
  */
 export async function POST({ request, locals, params }: any) {
-    if(!locals.user) {
-        return json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const user = getAuthenticatedUser(locals);
     const blob = await request.blob();
     const contactId = Number(params.id);
     
     if (!blob) {
-        return json(errorBody('No file uploaded'), { status: 400 });
+        return error(400, 'api.generic.no_file_uploaded');
     }
 
     try {
         const validation = validateFile(blob);
         if (!validation.valid) {
-            return json(errorBody(validation.error ?? 'Invalid file'), { status: 400 });
+            return error(400, validation.error ?? 'Invalid file');
         }
 
         const fileUrl = await saveFile(blob);
 
-        const existingPhoto: any = await database.contactPhotos.findById(contactId);
-        if (existingPhoto && existingPhoto.photo_url) {
-            const oldPath = path.join(uploadDir, existingPhoto.photo_url);
+        const contact: Contact = await database.contactPhotos.findById(contactId);
+        if(contact.user_id !== user.id) {
+            return error(404, 'api.generic.not_found');
+        }
+        if (contact && contact.photo_url) {
+            const oldPath = path.join(uploadDir, contact.photo_url);
             fs.unlink(oldPath, (err) => {
                 if (err) {
                     console.error('Failed to delete old photo:', err);
@@ -45,23 +47,21 @@ export async function POST({ request, locals, params }: any) {
         return json({ url: fileUrl }, { status: 201 });
     }
     catch (err: any) {
-        return json(errorBody(err.message), { status: 400 });
+        return error(400, err.message);
     }
 }
 
 export async function DELETE({ locals, params }: any) {
-    if(!locals.user) {
-        return json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const user = getAuthenticatedUser(locals);
     const contactId = Number(params.id);
     
     try {
-        const existingPhoto: any = await database.contactPhotos.findById(contactId);
-        if (!existingPhoto || !existingPhoto.photo_url) {
-            return json(errorBody('No photo found for this contact'), { status: 404 });
+        const contact: Contact = await database.contactPhotos.findById(contactId);
+        if (!contact || !contact.photo_url || contact.user_id !== user.id) {
+            return error(404, 'api.generic.not_found');
         }
 
-        const filePath = path.join(uploadDir, existingPhoto.photo_url);
+        const filePath = path.join(uploadDir, contact.photo_url);
         fs.unlink(filePath, (err) => {
             if (err) {
                 console.error('Failed to delete photo:', err);
@@ -70,16 +70,9 @@ export async function DELETE({ locals, params }: any) {
 
         await database.contactPhotos.delete(contactId);
 
-        return json({ message: 'Photo deleted successfully' }, { status: 200 });
+        return json({ message: 'api.generic.success' }, { status: 200 });
     }
     catch (err: any) {
-        return json(errorBody(err.message), { status: 400 });
+        return error(500, 'api.generic.server_error');
     }
-}
-
-function errorBody(err: string) {
-    return {
-        error:     err ?? 'An error occurred during file upload',
-        timestamp: new Date().toISOString()
-    };
 }

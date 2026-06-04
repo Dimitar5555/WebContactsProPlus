@@ -17,10 +17,6 @@ type Contact = {
 	notes?: string;
 };
 
-type ContactWithVisibility = Contact & {
-	is_visible: boolean;
-};
-
 type PhoneNumber = {
 	id: number;
 	contact_id: number;
@@ -36,4 +32,10 @@ type ContactWithPhones = {
 type Message = {
     text: string | null;
     type: 'success' | 'error' | 'warning' | '';
+};
+
+type ApiResponse<T> = {
+	success: boolean;
+	message?: string;
+	data?: T;
 };
