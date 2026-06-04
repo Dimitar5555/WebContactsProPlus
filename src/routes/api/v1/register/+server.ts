@@ -2,9 +2,8 @@ import { database } from '$lib/database';
 import { json, error } from '@sveltejs/kit';
 import bcrypt from 'bcrypt';
 
-
 function validateForm(email: string, username: string, password: string): boolean {
-    if (!email || !username || !password) {
+    if(!email || !username || !password) {
         return false;
     }
     if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -28,7 +27,6 @@ export async function POST({ request, response }: { request: Request, response: 
     const password = data.password?.toString() ?? '';
     const hashedPassword = bcrypt.hashSync(password, 10);
     const email = data.email?.toString().trim();
-
 
     if(!validateForm(email, username, password)) {
         return error(400, 'api.register.invalid_email_username_password');

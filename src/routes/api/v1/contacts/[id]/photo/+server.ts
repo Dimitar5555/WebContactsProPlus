@@ -47,7 +47,7 @@ export async function DELETE({ locals, params }: any) {
     
     const contact = await database.contacts.findById(contactId);
     if(!contact || !contact.photo_url || contact.user_id !== user.id) {
-        return error(404, `api.generic.not_found`);
+        return error(404, 'api.generic.not_found');
     }
 
     await deletePhoto(contact.photo_url);

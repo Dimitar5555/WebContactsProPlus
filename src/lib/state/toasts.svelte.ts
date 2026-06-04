@@ -14,7 +14,7 @@ export class ToastStore {
 
     remove(id: number) {
         const toast = this.toasts.find((t) => t.id === id);
-        if (toast) {
+        if(toast) {
             clearTimeout(toast.timeoutId);
             this.toasts = this.toasts.filter((t) => t.id !== id);
         }

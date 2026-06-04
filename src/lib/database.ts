@@ -31,7 +31,7 @@ db.exec(`
 
 const userCount = db.prepare('SELECT COUNT(*) as count FROM users').get() as { count: number };
 import bcrypt from 'bcrypt';
-if (userCount.count === 0) {
+if(userCount.count === 0) {
     const hashedPassword1 = bcrypt.hashSync('password1', 10);
     const hashedPassword2 = bcrypt.hashSync('password2', 10);
     const insertUser = db.prepare('INSERT INTO users (username, password, email) VALUES (?, ?, ?)');
@@ -65,7 +65,7 @@ export type QueryParams<T> = {
 };
 
 const mapContact = (row: any)  => {
-    if (!row) return undefined;
+    if(!row) return undefined;
     return {
         ...row,
         is_favourite: Boolean(row.is_favourite)
@@ -78,7 +78,7 @@ export const database = {
             let query = 'SELECT * FROM contacts WHERE user_id = ?';
             const params: any[] = [userId];
 
-            if (where?.is_favourite !== undefined) {
+            if(where?.is_favourite !== undefined) {
                 query += ' AND is_favourite = ?';
                 params.push(where.is_favourite ? 1 : 0);
             }
