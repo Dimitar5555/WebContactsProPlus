@@ -4,6 +4,7 @@ import path from 'path';
 import { database } from '$lib/database';
 import fs from 'fs';
 import { getAuthenticatedUser } from '$lib/server/auth';
+import { deletePhoto } from '$lib/server/photos';
 
 
 createUploadsDir();
@@ -61,12 +62,7 @@ export async function DELETE({ locals, params }: any) {
             return error(404, 'api.generic.not_found');
         }
 
-        const filePath = path.join(uploadDir, contact.photo_url);
-        fs.unlink(filePath, (err) => {
-            if (err) {
-                console.error('Failed to delete photo:', err);
-            }
-        });
+        await deletePhoto(contact.photo_url);
 
         await database.contactPhotos.delete(contactId);
 

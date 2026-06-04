@@ -30,21 +30,20 @@
         const url = '/api/v1/login';
         const formData = new FormData(event.currentTarget as HTMLFormElement);
         try {
-            const result = await fetch(url, {
+            const res = await fetch(url, {
                 method: 'POST',
                 body: formData
-            })
-
-            const data = await result.json();
-            message = { text: data.message, type: data.success ? 'success' : 'error' };
-            if (data.success) {
+            });
+            const data = await res.json();
+            message = { text: data.message, type: res.ok ? 'success' : 'error' };
+            if (res.ok) {
                 setTimeout(() => {
                     window.location.href = '/contacts';
                 }, 1000);
             }
         }
         catch (error) {
-            message = { text: 'Грешка при влизане. Моля, опитайте отново.', type: 'error' };
+            message = { text: 'login.error', type: 'error' };
         }
     }
 

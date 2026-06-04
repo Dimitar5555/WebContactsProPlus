@@ -8,21 +8,16 @@
     let password: string = $state('');
     let message: Message = $state({ text: null, type: '' });
 
-    function submitRegisterForm(event: Event) {
+    async function submitRegisterForm(event: Event) {
         event.preventDefault();
         const url = '/api/v1/register';
         const formData = new FormData(event.currentTarget as HTMLFormElement);
-        fetch(url, {
+        const res = await fetch(url, {
             method: 'POST',
             body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            message = { text: data.message, type: data.success ? 'success' : 'error' };
-        })
-        .catch(error => {
-            message = { text: 'Възникна грешка при регистрацията. Моля, опитайте отново. Грешка: ' + error.message, type: 'error' };
         });
+        const data = await res.json();
+        message = { text: data.message, type: res.ok ? 'success' : 'error' };
     }
 </script>
 

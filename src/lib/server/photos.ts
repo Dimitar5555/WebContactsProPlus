@@ -66,3 +66,23 @@ export async function saveFile(blob: Blob): Promise<string> {
 
     return name;
 }
+
+export async function deletePhoto(filename: string) {
+    const filePath = path.join(uploadDir, filename);
+    const thumbPath = path.join(uploadDir, filename.replace(/(\.\w+)$/, '_thumb$1'));
+    let success = true;
+
+    await fs.unlink(filePath, (err) => {
+        if (err) {
+            console.error('Failed to delete file:', err);
+            success = false;
+        }
+    });
+    await fs.unlink(thumbPath, (err) => {
+        if (err) {
+            console.error('Failed to delete thumbnail:', err);
+            success = false;
+        }
+    });
+    return success;
+}

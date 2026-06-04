@@ -1,6 +1,7 @@
 import { json, error } from '@sveltejs/kit';
 import { database } from '$lib/database';
 import { getAuthenticatedUser } from '$lib/server/auth.js';
+import { deletePhoto } from '$lib/server/photos';
 
 export async function GET({ params, locals }) {
     const user = getAuthenticatedUser(locals);
@@ -95,6 +96,10 @@ export async function DELETE({ params, locals }) {
         
         if (!contact || contact.user_id !== user.id) {
             return error(404, 'api.generic.not_found');
+        }
+
+        if(contact.photo_path) {
+            await deletePhoto(contact.photo_path);
         }
 
         await database.contacts.delete(contactId);
