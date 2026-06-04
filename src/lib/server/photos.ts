@@ -47,7 +47,7 @@ export async function saveFile(blob: Blob): Promise<string> {
     const id = uuidv4();
     const name = `${id}.${ext}`;
     const dest = path.join(uploadDir, name);
-    const thumbName = `${id}_thumb.${ext}`;
+    const thumbName = `thumb_${id}.${ext}`;
     const thumbDest = path.join(uploadDir, thumbName);
 
     const buffer = Buffer.from(await blob.arrayBuffer());
@@ -69,7 +69,7 @@ export async function saveFile(blob: Blob): Promise<string> {
 
 export async function deletePhoto(filename: string) {
     const filePath = path.join(uploadDir, filename);
-    const thumbPath = path.join(uploadDir, filename.replace(/(\.\w+)$/, '_thumb$1'));
+    const thumbPath = path.join(uploadDir, `thumb_${filename}`);
     let success = true;
 
     await fs.unlink(filePath, (err) => {
