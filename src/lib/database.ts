@@ -43,18 +43,20 @@ if (userCount.count === 0) {
     insertContact.run(1, 'Мария', 'Георгиева', 1, 'Нуждае се от специално внимание при избора на подарък');
     insertContact.run(1, 'Георги', 'Тричков', 1, null);
     insertContact.run(1, 'Анна', 'Димитрова', 0, null);
+    insertContact.run(1, 'Петър', 'Иванов', 0, null);
+    insertContact.run(1, 'Петрана', 'Петрова', 0, null);
     insertContact.run(2, 'Петър', 'Иванов', 0, null);
 
     const insertPhone = db.prepare('INSERT INTO phone_numbers (contact_id, phone_number, label) VALUES (?, ?, ?)');
     insertPhone.run(1, '123-456-7890', null);
     insertPhone.run(1, '234-567-8901', 'WORK');
     insertPhone.run(1, '345-678-9012', 'MOBILE');
-    insertPhone.run(1, '456-789-0123', null);
-    insertPhone.run(2, '567-890-1234', 'HOME');
-    insertPhone.run(3, '678-901-2345', null);
-    insertPhone.run(3, '789-012-3456', 'MOBILE');
-    insertPhone.run(4, '890-123-4567', null);
-    insertPhone.run(5, '901-234-5678', 'WORK');
+    insertPhone.run(2, '456-789-0123', null);
+    insertPhone.run(3, '567-890-1234', 'HOME');
+    insertPhone.run(4, '678-901-2345', null);
+    insertPhone.run(5, '789-012-3456', 'MOBILE');
+    insertPhone.run(6, '890-123-4567', null);
+    insertPhone.run(7, '901-234-5678', 'WORK');
 }
 
 export type QueryParams<T> = {
