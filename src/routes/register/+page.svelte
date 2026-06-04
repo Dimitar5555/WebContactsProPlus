@@ -9,13 +9,39 @@
     let password: string = $state('');
     let toastStore = new ToastStore();
 
+    function validateForm(): boolean {
+        if (!email || !username || !password) {
+            toastStore.add('register.validation_error', 'warning');
+            return false;
+        }
+        if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            toastStore.add('register.email_invalid_error', 'warning');
+            return false;
+        }
+        if(password.length < 8) {
+            toastStore.add('register.password_length_error', 'warning');
+            return false;
+        }
+        if(username.length < 3 || username.length > 20) {
+            toastStore.add('register.username_length_error', 'warning');
+            return false;
+        }
+        if(/^[a-zA-Z0-9_]+$/.test(username) === false) {
+            toastStore.add('register.username_invalid_error', 'warning');
+            return false;
+        }
+        return true;
+    }
+
     async function submitRegisterForm(event: Event) {
         event.preventDefault();
+        if(!validateForm()) {
+            return;
+        }
         const url = '/api/v1/register';
-        const formData = new FormData(event.currentTarget as HTMLFormElement);
         const res = await fetch(url, {
             method: 'POST',
-            body: formData
+            body: JSON.stringify({ email, username, password }),
         });
         const data = await res.json();
         toastStore.add(data.message, res.ok ? 'success' : 'error');

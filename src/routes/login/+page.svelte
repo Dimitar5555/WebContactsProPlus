@@ -29,11 +29,10 @@
     async function submitLoginForm(event: Event) {
         event.preventDefault();
         const url = '/api/v1/login';
-        const formData = new FormData(event.currentTarget as HTMLFormElement);
         try {
             const res = await fetch(url, {
                 method: 'POST',
-                body: formData
+                body: JSON.stringify({ username, password }),
             });
             const data = await res.json();
             toastStore.add(data.message, res.ok ? 'success' : 'error');

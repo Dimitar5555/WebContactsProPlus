@@ -12,9 +12,9 @@ export async function POST({
     request: Request;
     cookies: Cookies;
 }) {
-    const data = await request.formData();
-    const username = data.get('username')?.toString().trim();
-    const password = data.get('password')?.toString() ?? '';
+    const data = await request.json();
+    const username = data.username?.toString().trim();
+    const password = data.password?.toString() ?? '';
 
     if(!username || !password) {
         return error(400, 'api.login.missing_credentials');
