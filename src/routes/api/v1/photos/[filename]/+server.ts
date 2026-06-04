@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { uploadDir } from '$lib/server/upload.js';
+import { uploadDir } from '$lib/server/photos.js';
 import { error } from '@sveltejs/kit';
 
 const MIME: Record<string, string> = {

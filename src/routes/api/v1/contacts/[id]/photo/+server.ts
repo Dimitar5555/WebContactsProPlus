@@ -1,5 +1,5 @@
 import { json, error } from '@sveltejs/kit';
-import { createUploadsDir, validateFile, saveFile, uploadDir } from '$lib/server/upload.js';
+import { createUploadsDir, validateFile, saveFile, uploadDir } from '$lib/server/photos.js';
 import path from 'path';
 import { database } from '$lib/database';
 import fs from 'fs';
@@ -21,35 +21,24 @@ export async function POST({ request, locals, params }: any) {
     if (!blob) {
         return error(400, 'api.generic.no_file_uploaded');
     }
-
-    try {
-        const validation = validateFile(blob);
-        if (!validation.valid) {
-            return error(400, validation.error ?? 'Invalid file');
-        }
-
-        const fileUrl = await saveFile(blob);
-
-        const contact: Contact = await database.contactPhotos.findById(contactId);
-        if(contact.user_id !== user.id) {
-            return error(404, 'api.generic.not_found');
-        }
-        if (contact && contact.photo_url) {
-            const oldPath = path.join(uploadDir, contact.photo_url);
-            fs.unlink(oldPath, (err) => {
-                if (err) {
-                    console.error('Failed to delete old photo:', err);
-                }
-            });
-        }
-
-        await database.contactPhotos.create({ contact_id: contactId, photo_url: fileUrl });
-
-        return json({ url: fileUrl }, { status: 201 });
+    const contact = await database.contacts.findById(contactId);
+    if(!contact || contact.user_id !== user.id) {
+        return error(404, 'api.generic.not_found');
     }
-    catch (err: any) {
-        return error(400, err.message);
+
+    const validation = validateFile(blob);
+    if (!validation.valid) {
+        return error(400, validation.error ?? 'Invalid file');
     }
+    
+    const fileUrl = await saveFile(blob);
+    if (contact.photo_url) {
+        await deletePhoto(contact.photo_url);
+    }
+
+    await database.contactPhotos.create({ contact_id: contactId, photo_url: fileUrl });
+
+    return json({ url: fileUrl }, { status: 201 });
 }
 
 export async function DELETE({ locals, params }: any) {
