@@ -30,10 +30,10 @@ export function validateFile(blob: Blob): { valid: boolean; error?: string } {
     const type = blob.type;
 
     if(!ALLOWED_MIME_TYPES.includes(type)) {
-        return { valid: false, error: 'Only image files are allowed' };
+        return { valid: false, error: 'api.photo.invalid_file_type' };
     }
     if(blob.size > UPLOADS_LIMIT_BYTES) {
-        return { valid: false, error: 'File size exceeds the 5 MB limit' };
+        return { valid: false, error: 'api.photo.file_too_large' };
     }
 
     return { valid: true };

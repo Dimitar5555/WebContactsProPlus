@@ -11,10 +11,6 @@ const MIME: Record<string, string> = {
     '.webp': 'image/webp'
 };
 
-/**
- * GET /api/v1/photos/:filename
- * Streams the requested photo from disk.
- */
 export function GET({ params }) {
     const filename = params.filename;
     let decoded;
@@ -31,11 +27,11 @@ export function GET({ params }) {
         !resolvedPath.startsWith(uploadRoot + path.sep) &&
         resolvedPath !== uploadRoot
     ) {
-        return error(404, 'api.photos.not_found');
+        return error(404, 'api.generic.not_found');
     }
 
     if(!fs.existsSync(resolvedPath) || !fs.statSync(resolvedPath).isFile()) {
-        return error(404, 'api.photos.not_found');
+        return error(404, 'api.generic.not_found');
     }
 
     const ext = path.extname(resolvedPath).toLowerCase();

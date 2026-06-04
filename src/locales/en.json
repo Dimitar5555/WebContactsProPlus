@@ -1,30 +1,36 @@
 {
     "api": {
+        "generic": {
+            "unauthorised_user": "Unauthorised user",
+            "invalid_id": "Invalid object ID",
+            "not_found": "Object not found",
+            "server_error": "Server error"
+        },
         "login": {
             "missing_credentials": "Missing username or password",
             "invalid_credentials": "Invalid username or password",
             "success": "Login successful"
         },
+        "register": {
+            "invalid_email_username_password": "Invalid email, username and/or password",
+            "already_exists": "User with that username or email already exists",
+            "success": "User registered successfully"
+        },
+        "photo": {
+            "no_file_uploaded": "No file uploaded",
+            "invalid_file_type": "Invalid file type. Only images are allowed.",
+            "file_too_large": "File is too large. Maximum size is 5MB.",
+            "upload_success": "Photo uploaded successfully",
+            "delete_success": "Photo deleted successfully"
+        },
         "contacts": {
-            "invalid_id": "Invalid id",
-            "contact_not_found": "Contact was not found",
-            "server_error": "Failed to fetch contact",
-            "unauthorized_user": "Unauthorized",
             "missing_fields": "Missing required fields",
             "success_update": "Contact updated successfully",
-            "failed_update": "Failed to update contact",
             "success_delete": "Contact deleted successfully",
-            "failed_delete": "Failed to delete contact",
-            "failed_fetch": "Failed to fetch contacts",
-            "failed_create": "Failed to create contact"
-        },
-        "photos": {
-            "not_found": "Not Found"
-        },
-        "register": {
-            "missing_credentials": "Missing username, email or password",
-            "exists": "User with that username already exists",
-            "success_registration": "The user was successfully registered"
+            "favourite": {
+                "added": "Contact added to favourites",
+                "removed": "Contact removed from favourites"
+            }
         }
     },
     "navigation": {

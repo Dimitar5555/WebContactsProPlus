@@ -14,22 +14,20 @@ export async function toggleFavourite(contactId: number): Promise<Message> {
         const data = await response.json();
         if(response.ok) {
             return {
-                text: data.newState
-                    ? 'contacts.marked_favourite'
-                    : 'contacts.unmarked_favourite',
+                text: data.message,
                 type: 'success'
             };
         }
         else {
             return {
-                text: data.error,
+                text: data.message,
                 type: 'error'
             };
         }
     }
     catch (error) {
         return {
-            text: error.message,
+            text: 'api.generic_error',
             type: 'error'
         };
     }
