@@ -1,10 +1,6 @@
 import { sequence } from '@sveltejs/kit/hooks';
-import type { Handle } from '@sveltejs/kit'
-
-
+import { redirect, type Handle } from '@sveltejs/kit'
 import { locale } from 'svelte-i18n'
-
-
 import jwt from 'jsonwebtoken';
 import * as env from '$env/static/private';
 
@@ -13,33 +9,32 @@ const first: Handle = async ({ event, resolve }) => {
 	if(lang) {
 		locale.set(lang);
 	}
-	return resolve(event);
+	return await resolve(event);
 }
 
 const second: Handle = async ({ event, resolve }: any) => {
     const pathname = event.url.pathname;
-    const publicPaths = ['/login', '/register', '/about', '/favicon.png', '/api/v1/login', '/api/v1/register'];
-    const isPublic = publicPaths.includes(pathname);
-    if(isPublic) {
-        console.log('Public path accessed:', pathname);
-    }
-    else if(!event.locals.user) {
-        console.log('Protected path accessed:', pathname);
-        const token = event.cookies.get('token');
-        if(!token) {
-            event.locals.user = null;
-            return new Response('Redirecting', {status: 303, headers: { Location: '/login' }});
-        }
+    const token = event.cookies.get('token');
+
+    if (token) {
         try {
-            const JWT_SECRET = (env as any).JWT_SECRET ?? process.env.JWT_SECRET ?? 'secret';
-            const decoded = jwt.verify(token, JWT_SECRET as any);
-            event.locals.user = decoded as any;
-        }
-        catch (err) {
+            event.locals.user = jwt.verify(token, env.JWT_SECRET) as any;
+        } catch {
             event.locals.user = null;
-            return new Response('Redirecting', {status: 303, headers: { Location: '/login' }});
+            event.cookies.delete('token', { path: '/' });
         }
     }
+
+    const isPublic = ['/login', '/register'].includes(pathname);
+
+    if(event.locals.user && isPublic) {
+        throw redirect(303, '/contacts');
+    }
+
+    if(!event.locals.user && !['/login', '/register', '/', '/api/v1/login', '/api/v1/register'].includes(pathname)) {
+        throw redirect(303, '/login');
+    }
+
     return await resolve(event);
 }
 
