@@ -41,6 +41,16 @@
         "favourite_contacts": "Любими контакти",
         "logout": "Изход"
     },
+    "home": {
+        "title": "Добре дошли в WebChatProPlus!",
+        "lead": "Сигурният начин да управлявате контактите си и да останете свързани.",
+        "feature_security": "Сигурност",
+        "feature_security_description": "Вашите данни са защитени и криптирани.",
+        "feature_speed": "Скорост",
+        "feature_speed_description": "Достъп до контактите си в миг.",
+        "feature_cloud": "Cloud Service",
+        "feature_cloud_description": "Access from any device, anywhere."
+    },
     "login": {
         "title": "Вход",
         "username": "Потребителско име",
@@ -65,27 +75,42 @@
         "my_contacts": "Моите контакти",
         "edit": {
             "success_update": "Контактът беше успешно обновен",
-            "failed_update": "Неуспешно обновяване на контакт",
-            "not_found": "Контактът не беше намерен",
-            "save": "Запиши",
-            "back": "Назад"
+            "failed_update": "Неуспешно обновяване на контакт"
         },
         "actions": {
-            "back": "Назад",
+            "view": "Прегледай",
             "edit": "Редактирай",
+            "delete": "Изтрий",
             "favourite": "Добави в любими",
             "unfavourite": "Премахни от любими",
-            "delete": "Изтрий",
-            "view": "Прегледай",
+            "back": "Назад",
+            "save": "Запази",
             "create": "Създай контакт"
         },
         "confirm_delete": "Сигурен ли си, че искаш да изтриеш този контакт?",
         "delete_success": "Контактът беше успешно изтрит",
         "delete_failed": "Неуспешно изтриване на контакт",
+        "delete_cancelled": "Изтриването на контакт беше отменено",
         "not_found": "Контактът не беше намерен",
-        "save": "Запиши",
         "photo_alt": "Снимка на контакт",
         "is_favourite": "Този контакт е любим.",
-        "notes": "Бележки"
+        "notes": "Бележки",
+        "search": "Търсене на контакти...",
+        "no_results": "Не са намерени контакти, съвпадащи с търсенето ви.",
+        "no_contacts": "Няма контакти. Започнете да добавяте такива!",
+        "phone_number": "Телефонен номер",
+        "label": {
+            "no_label": "Без етикет",
+            "mobile": "Мобилен",
+            "home": "Домашен",
+            "work": "Служебен"
+        },
+        "remove_photo": "Премахни снимка",
+        "remove_phone": "Премахни телефонен номер",
+        "first_name": "Име",
+        "last_name": "Фамилия"
+    },
+    "favourite_contacts": {
+        "title": "Любими контакти"
     }
 }

@@ -1,4 +1,5 @@
-<script>
+<script lang="ts">
+    import { _ } from 'svelte-i18n';
     import ExternalNavigation from "$lib/components/ExternalNavigation.svelte";
 </script>
 
@@ -8,9 +9,9 @@
     
     <!-- Hero Section -->
     <div class="text-center mb-5">
-        <h1 class="display-3 fw-bold mb-3">Добре дошли в WebChatProPlus!</h1>
+        <h1 class="display-3 fw-bold mb-3">{$_('home.title')}</h1>
         <p class="lead" style="color: rgba(255, 255, 255, 0.8);">
-            Сигурният начин да управлявате контактите си и да останете свързани.
+            {$_('home.lead')}
         </p>
     </div>
 
@@ -19,28 +20,28 @@
         <!-- I added the 'glass-card' class here -->
         <div class="col-md-3">
             <div class="glass-card p-4 text-center">
-                <h5>🔒 Сигурност</h5>
-                <p class="small mb-0">Вашите данни са защитени и криптирани.</p>
+                <h5>🔒 {$_('home.feature_security')}</h5>
+                <p class="small mb-0">{$_('home.feature_security_description')}</p>
             </div>
         </div>
         <div class="col-md-3">
             <div class="glass-card p-4 text-center">
-                <h5>⚡ Бързина</h5>
-                <p class="small mb-0">Достъпвайте контактите си светкавично.</p>
+                <h5>⚡ {$_('home.feature_speed')}</h5>
+                <p class="small mb-0">{$_('home.feature_speed_description')}</p>
             </div>
         </div>
         <div class="col-md-3">
             <div class="glass-card p-4 text-center">
-                <h5>☁️ Облачна услуга</h5>
-                <p class="small mb-0">Достъп от всяко устройство, навсякъде.</p>
+                <h5>☁️ {$_('home.feature_cloud')}</h5>
+                <p class="small mb-0">{$_('home.feature_cloud_description')}</p>
             </div>
         </div>
     </div>
 
     <!-- Call to Action -->
     <div class="d-flex gap-3 mt-4">
-        <a href="/register" class="btn btn-primary btn-lg px-5">Регистрация</a>
-        <a href="/login" class="btn btn-outline-light btn-lg px-5">Вход</a>
+        <a href="/register" class="btn btn-primary btn-lg px-5">{$_('navigation.register')}</a>
+        <a href="/login" class="btn btn-outline-light btn-lg px-5">{$_('navigation.login')}</a>
     </div>
 </main>
 

@@ -58,14 +58,14 @@
 <div class="container bg-white p-4 mt-3 rounded shadow">
     <BackButton />
     {#if !data.contact}
-        <p>{$_('contact.not_found')}</p>
+        <p>{$_('contacts.not_found')}</p>
     {:else}
         <form onsubmit={submitForm}>
             <ContactForm 
                 bind:data={dataState}
                 bind:photo_file={photo_file}
                 bind:remove_photo={remove_photo}
-                saveBtnLabel={'contacts.save'}
+                saveBtnLabel={'contacts.actions.save'}
             />
         </form>
     {/if}

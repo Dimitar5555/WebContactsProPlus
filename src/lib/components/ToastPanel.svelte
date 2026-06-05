@@ -10,7 +10,7 @@
         data.remove(id);
     }
 </script>
-<div style="position: fixed; top: 1rem; right: 1rem; bottom: 1rem; z-index: 1000;" class="d-flex flex-column-reverse flex-end">
+<div style="position: fixed; right: 1rem; bottom: 1rem; z-index: 1000;" class="d-flex flex-column-reverse flex-end">
     {#each data.toasts as toast}
         <div
             class="alert"

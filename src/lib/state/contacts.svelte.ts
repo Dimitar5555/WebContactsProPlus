@@ -14,7 +14,7 @@ export class ContactStore {
         const message = await deleteContact(id);
         if(message.type === 'success') {
             this.contacts = this.contacts.filter(c => c.id !== id);
-            this.toastStore.add('contacts.deleted', 'success');
+            this.toastStore.add('contacts.deleteSuccess', 'success');
         }
         else {
             this.toastStore.add('contacts.deleteFailed', 'error');

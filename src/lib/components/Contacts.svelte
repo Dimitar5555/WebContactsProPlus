@@ -193,7 +193,7 @@
 </nav>
 {/if}
 
-<input type="text" placeholder="Търсене..." bind:value={searchQuery} class="form-control mb-3" />
+<input type="text" placeholder={$_('contacts.search')} bind:value={searchQuery} class="form-control mb-3" />
 {#if filteredContacts.length > 0}
     <div>
         {#each filteredContacts as contact}
@@ -213,9 +213,9 @@
         {/each}
     </div>
 {:else if searchQuery.length > 0}
-    <div>Няма намерени контакти.</div>
+    <div>{$_('contacts.no_results')}</div>
 {:else}
-    <div>Няма контакти. Започнете да добавяте!</div>
+    <div>{$_('contacts.no_contacts')}</div>
 {/if}
 
 <svelte:window onclick={onPageClick} />

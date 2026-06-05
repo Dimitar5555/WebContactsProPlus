@@ -41,6 +41,16 @@
         "favourite_contacts": "Favourite Contacts",
         "logout": "Logout"
     },
+    "home": {
+        "title": "Welcome to WebChatProPlus!",
+        "lead": "The secure way to manage your contacts and stay connected.",
+        "feature_security": "Security",
+        "feature_security_description": "Your data is protected and encrypted.",
+        "feature_speed": "Speed",
+        "feature_speed_description": "Access your contacts in a flash.",
+        "feature_cloud": "Cloud Service",
+        "feature_cloud_description": "Access from any device, anywhere."
+    },
     "login": {
         "title": "Login",
         "username": "Username",
@@ -60,9 +70,6 @@
         "already_have_account": "Already have an account?",
         "login_link": "Login here"
     },
-    "contact": {
-        "not_found": "Contact was not found"
-    },
     "contacts": {
         "add": "Add Contact",
         "my_contacts": "My Contacts",
@@ -70,16 +77,38 @@
             "success_update": "Contact updated successfully",
             "failed_update": "Failed to update contact"
         },
+        "actions": {
+            "view": "View",
+            "edit": "Edit",
+            "delete": "Delete",
+            "favourite": "Add to favourites",
+            "unfavourite": "Remove from favourites",
+            "back": "Back",
+            "save": "Save",
+            "create": "Create"
+        },
         "confirm_delete": "Are you sure you want to delete this contact?",
         "delete_success": "Contact deleted successfully",
         "delete_failed": "Failed to delete contact",
+        "delete_cancelled": "Contact deletion cancelled",
         "not_found": "Contact was not found",
-        "save": "Save",
         "photo_alt": "Contact photo",
         "is_favourite": "This contact is a favourite.",
         "notes": "Notes",
-        "back": "Back",
-        "delete": "Delete"
+        "search": "Search contacts...",
+        "no_results": "No contacts found matching your search.",
+        "no_contacts": "No contacts. Start adding some!",
+        "phone_number": "Phone number",
+        "label": {
+            "no_label": "No label",
+            "mobile": "Mobile",
+            "home": "Home",
+            "work": "Work"
+        },
+        "remove_photo": "Remove photo",
+        "remove_phone": "Remove phone number",
+        "first_name": "First name",
+        "last_name": "Last name"
     },
     "favourite_contacts": {
         "title": "Favourite Contacts"
