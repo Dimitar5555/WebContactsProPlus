@@ -48,8 +48,8 @@
         "feature_security_description": "Вашите данни са защитени и криптирани.",
         "feature_speed": "Скорост",
         "feature_speed_description": "Достъп до контактите си в миг.",
-        "feature_cloud": "Cloud Service",
-        "feature_cloud_description": "Access from any device, anywhere."
+        "feature_cloud": "Облачна услуга",
+        "feature_cloud_description": "Достъп от всяко устройство, навсякъде."
     },
     "login": {
         "title": "Вход",
