@@ -52,7 +52,7 @@
 
 <div class="d-flex align-items-center justify-content-center h-100">
     <form class="border border-3 py-2 px-3 rounded shadow bg-light" onsubmit={submitLoginForm}>
-        <h2 class="text-center">{$_('login.title')}</h2>
+        <h2 class="text-center mb-4">{$_('login.title')}</h2>
         <div class="form-group mb-3">
             <label for="username" class="form-label">{$_('login.username')}</label>
             <input 
@@ -73,25 +73,27 @@
             class="form-control"
             >
         </div>
-        <button class="btn btn-primary" type="submit" bind:this={submitBtn}>
-            <i class="bi bi-box-arrow-in-right"></i>
-            {$_('login.submit')}
-        </button>
-        <div class="btn-group" role="group">
-            <button 
-                class="btn btn-outline-secondary"
-                type="button"
-                onclick={() => loginAs('user1')}
-                >
-                {$_('login.loginAsUser1')}
+        <div class="text-center">
+            <button class="btn btn-primary" type="submit" bind:this={submitBtn}>
+                <i class="bi bi-box-arrow-in-right"></i>
+                {$_('login.submit')}
             </button>
-            <button
-                class="btn btn-outline-secondary"
-                type="button"
-                onclick={() => loginAs('user2')}
-                >
-                {$_('login.loginAsUser2')}
-            </button>
+            <div class="btn-group" role="group">
+                <button 
+                    class="btn btn-outline-secondary"
+                    type="button"
+                    onclick={() => loginAs('user1')}
+                    >
+                    {$_('login.loginAsUser1')}
+                </button>
+                <button
+                    class="btn btn-outline-secondary"
+                    type="button"
+                    onclick={() => loginAs('user2')}
+                    >
+                    {$_('login.loginAsUser2')}
+                </button>
+            </div>
         </div>
         <p class="mt-3 text-muted text-center">{$_('login.registerPrompt')} <a href="/register">{$_('login.registerLink')}</a></p>
     </form>
