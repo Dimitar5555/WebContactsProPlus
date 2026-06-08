@@ -108,7 +108,9 @@
         "remove_photo": "Remove photo",
         "remove_phone": "Remove phone number",
         "first_name": "First name",
-        "last_name": "Last name"
+        "last_name": "Last name",
+        "phone_numbers": "Phone numbers",
+        "add_phone": "Add phone number"
     },
     "favourite_contacts": {
         "title": "Favourite Contacts"

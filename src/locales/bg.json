@@ -108,7 +108,9 @@
         "remove_photo": "Премахни снимка",
         "remove_phone": "Премахни телефонен номер",
         "first_name": "Име",
-        "last_name": "Фамилия"
+        "last_name": "Фамилия",
+        "phone_numbers": "Телефонни номера",
+        "add_phone": "Добави телефонен номер"
     },
     "favourite_contacts": {
         "title": "Любими контакти"
