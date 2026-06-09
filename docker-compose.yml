@@ -1,0 +1,53 @@
+services:
+  app:
+    build: .
+    image: webcontactsproplus:latest
+    container_name: wcpp-app
+    restart: unless-stopped
+    expose:
+      - "3000"
+    environment:
+      JWT_SECRET: ${JWT_SECRET}
+      ORIGIN: https://${DOMAIN}
+      PROTOCOL_HEADER: x-forwarded-proto
+      HOST_HEADER: x-forwarded-host
+    volumes:
+      - app-data:/data
+
+  nginx:
+    build:
+      context: ./nginx
+    image: wcpp-nginx:latest
+    container_name: wcpp-nginx
+    restart: unless-stopped
+    depends_on:
+      - app
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      DOMAIN: ${DOMAIN}
+    volumes:
+      - ./nginx/templates:/etc/nginx/templates:ro
+      - letsencrypt-certs:/etc/letsencrypt
+      - letsencrypt-www:/var/www/certbot
+
+  certbot:
+    image: certbot/certbot:latest
+    container_name: wcpp-certbot
+    restart: unless-stopped
+    depends_on:
+      - nginx
+    environment:
+      DOMAIN: ${DOMAIN}
+      LETSENCRYPT_EMAIL: ${LETSENCRYPT_EMAIL}
+    volumes:
+      - letsencrypt-certs:/etc/letsencrypt
+      - letsencrypt-www:/var/www/certbot
+      - ./certbot/entrypoint.sh:/entrypoint.sh:ro
+    entrypoint: ["/bin/sh", "/entrypoint.sh"]
+
+volumes:
+  app-data:
+  letsencrypt-certs:
+  letsencrypt-www:
