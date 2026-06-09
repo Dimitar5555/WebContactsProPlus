@@ -1,105 +1,38 @@
-import { json, error } from '@sveltejs/kit';
-import { database } from '$lib/database';
-import { getAuthenticatedUser } from '$lib/server/auth.js';
-import { deletePhoto } from '$lib/server/photos';
+import { json } from '@sveltejs/kit';
+import { contactService } from '$lib/server/services/contact.service';
+import { getAuthenticatedUser } from '$lib/server/auth';
+import { rethrowAsHttp } from '$lib/server/errors';
 
 export async function GET({ params, locals }) {
     const user = getAuthenticatedUser(locals);
-    const contactId = Number(params.id);
-
-    if(isNaN(contactId)) {
-        return error(400, 'api.generic.invalid_id');
+    try {
+        const contact = await contactService.getOwned(Number(params.id), user.id);
+        return json(contact, { status: 200 });
     }
-
-    const contact = await database.contacts.findById(contactId);
-
-    if(!contact || contact.user_id !== user.id) {
-        return error(404, 'api.generic.not_found');
+    catch (e) {
+        rethrowAsHttp(e);
     }
-
-    return json(contact, { status: 200 });
 }
 
 export async function PUT({ params, request, locals }: any) {
     const user = getAuthenticatedUser(locals);
-    const contactId = Number(params.id);
-    const body: any = await request.json();
-    const { first_name, last_name, notes } = body;
-
-    if(isNaN(contactId) || !first_name || !last_name) {
-        return error(400, 'api.contacts.missing_fields');
+    const body = await request.json();
+    try {
+        await contactService.update(Number(params.id), user.id, body);
+        return json({ message: 'api.contacts.update.success' }, { status: 200 });
     }
-
-    const contact = await database.contacts.findById(contactId);
-
-    if(!contact || contact.user_id !== user.id) {
-        return error(404, 'api.generic.not_found');
+    catch (e) {
+        rethrowAsHttp(e);
     }
-
-    await database.contacts.update(contactId, {
-        first_name,
-        last_name,
-        notes
-    });
-
-    const phoneNumbers: any[] =
-        await database.phoneNumbers.findByContactId(contactId);
-    const existingPhoneNumberIds = phoneNumbers.map((pn: any) => pn.id);
-    const incomingPhoneNumberIds = (body.phone_numbers || [])
-        .map((pn: any) => pn.id)
-        .filter((id: any) => id !== undefined);
-
-    for (const pn of body.phone_numbers || []) {
-        const item: any = pn;
-        if(item.id && existingPhoneNumberIds.includes(item.id)) {
-            await database.phoneNumbers.update(item.id, {
-                phone_number: item.phone_number,
-                label: item.label
-            });
-        }
-        else {
-            await database.phoneNumbers.create({
-                contact_id: contactId,
-                phone_number: item.phone_number,
-                label: item.label
-            });
-        }
-    }
-
-    for (const existingId of existingPhoneNumberIds) {
-        if(!incomingPhoneNumberIds.includes(existingId)) {
-            await database.phoneNumbers.delete(existingId);
-        }
-    }
-
-    return json(
-        { message: 'api.contacts.update.success' },
-        { status: 200 }
-    );
 }
 
 export async function DELETE({ params, locals }) {
     const user = getAuthenticatedUser(locals);
-    const contactId = Number(params.id);
-
-    if(isNaN(contactId)) {
-        return error(400, 'api.generic.invalid_id');
+    try {
+        await contactService.delete(Number(params.id), user.id);
+        return json({ message: 'api.contacts.delete.success' }, { status: 200 });
     }
-
-    const contact = await database.contacts.findById(contactId);
-
-    if(!contact || contact.user_id !== user.id) {
-        return error(404, 'api.generic.not_found');
+    catch (e) {
+        rethrowAsHttp(e);
     }
-
-    if(contact.photo_url) {
-        await deletePhoto(contact.photo_url);
-    }
-
-    await database.contacts.delete(contactId);
-
-    return json(
-        { message: 'api.contacts.delete.success' },
-        { status: 200 }
-    );
 }

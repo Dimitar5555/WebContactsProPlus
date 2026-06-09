@@ -1,46 +1,30 @@
-import { json, error } from '@sveltejs/kit';
-import { database } from '$lib/database';
-import { getAuthenticatedUser } from '$lib/server/auth.js';
+import { json } from '@sveltejs/kit';
+import { contactService } from '$lib/server/services/contact.service';
+import { getAuthenticatedUser } from '$lib/server/auth';
+import { rethrowAsHttp } from '$lib/server/errors';
 
 export async function GET({ locals }) {
     const user = getAuthenticatedUser(locals);
-    const contacts = await database.contacts.findMany({ userId: user.id });
-    return json({ contacts }, { status: 200 });
+    try {
+        const contacts = await contactService.listForUser(user.id);
+        return json({ contacts }, { status: 200 });
+    }
+    catch (e) {
+        rethrowAsHttp(e);
+    }
 }
 
 export async function POST({ request, locals }) {
     const user = getAuthenticatedUser(locals);
     const body = await request.json();
-    const { first_name, last_name, notes } = body;
-
-    if(!first_name || !last_name) {
-        return error(400, 'api.contacts.missing_fields');
+    try {
+        const contactId = await contactService.create(user.id, body);
+        return json(
+            { message: 'api.contacts.create.success', contactId },
+            { status: 201 }
+        );
     }
-
-    const newContactId = await database.contacts.create({
-        user_id: user.id,
-        first_name,
-        last_name,
-        notes
-    });
-
-    const phoneNumbers = body.phone_numbers || [];
-    for (const item of phoneNumbers) {
-        if(item.phone_number) {
-            const { phone_number, label } = item;
-            await database.phoneNumbers.create({
-                contact_id: newContactId,
-                phone_number: phone_number,
-                label
-            });
-        }
+    catch (e) {
+        rethrowAsHttp(e);
     }
-
-    return json(
-        {
-            message: 'api.contacts.create.success',
-            contactId: newContactId
-        },
-        { status: 201 }
-    );
 }
