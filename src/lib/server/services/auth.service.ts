@@ -12,6 +12,13 @@ if(!JWT_SECRET) {
     throw new Error('JWT_SECRET must be set');
 }
 
+// Pre-computed bcrypt hash used to keep login timing constant when the
+// supplied username does not exist. Without this, attackers could
+// enumerate valid usernames by observing the response-time difference
+// between "no user found" (no bcrypt work) and "wrong password" (one
+// bcrypt comparison).
+const DUMMY_HASH = bcrypt.hashSync('this-is-a-dummy-password-for-constant-time', 10);
+
 export type JwtPayload = {
     id: number;
     username: string;
@@ -46,7 +53,13 @@ export const authService = {
         }
 
         const user = await userRepository.findByUsername(username);
-        if(!user || !bcrypt.compareSync(password, user.password)) {
+        if(!user) {
+            // Burn the same bcrypt cycles regardless of whether the user
+            // exists. The return value is intentionally discarded.
+            bcrypt.compareSync(password, DUMMY_HASH);
+            throw new UnauthorizedError('api.login.invalid_credentials');
+        }
+        if(!bcrypt.compareSync(password, user.password)) {
             throw new UnauthorizedError('api.login.invalid_credentials');
         }
 

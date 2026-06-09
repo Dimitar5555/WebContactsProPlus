@@ -31,6 +31,11 @@ export const contactRepository = {
         return row ? mapContact(row) : undefined;
     },
 
+    findByPhotoUrl: async (filename: string): Promise<Contact | undefined> => {
+        const row = db.prepare('SELECT * FROM contacts WHERE photo_url = ?').get(filename);
+        return row ? mapContact(row) : undefined;
+    },
+
     create: async ({ user_id, first_name, last_name, is_favourite = false, notes = null }: {
         user_id: number;
         first_name: string;
