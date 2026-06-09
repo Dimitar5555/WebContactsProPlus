@@ -64,17 +64,16 @@ export type QueryParams<T> = {
     userId?: number;
 };
 
-const mapContact = (row: any)  => {
-    if(!row) return undefined;
+function mapContact(row: any): Contact {
     return {
         ...row,
         is_favourite: Boolean(row.is_favourite)
     };
-};
+}
 
 export const database = {
     contacts: {
-        findMany: async ({ where, userId }: QueryParams<any>): Promise<any[]> => {
+        findMany: async ({ where, userId }: QueryParams<any>): Promise<Contact[]> => {
             let query = 'SELECT * FROM contacts WHERE user_id = ?';
             const params: any[] = [userId];
 
@@ -89,7 +88,7 @@ export const database = {
             return rows.map(mapContact);
         },
 
-        findById: async (id: number): Promise<any | undefined> => {
+        findById: async (id: number): Promise<Contact> => {
             const stmt = db.prepare('SELECT * FROM contacts WHERE id = ?');
             const row = stmt.get(id);
 
@@ -116,18 +115,13 @@ export const database = {
             stmt.run(id);
         },
 
-        toggleFavourite: async (id: number, newState: boolean) => {
+        toggleFavourite: async (id: number, newState: boolean): Promise<void> => {
             const stmt = db.prepare('UPDATE contacts SET is_favourite = ? WHERE id = ?');
             stmt.run(newState ? 1 : 0, id);
         }
     },
 
     contactPhotos: {
-        findById: async (contact_id: number): Promise<any> => {
-            const stmt = db.prepare('SELECT photo_url FROM contacts WHERE id = ?');
-            const row = stmt.get(contact_id);
-            return row;
-        },
         create: async ({ contact_id, photo_url }: any): Promise<void> => {
             const stmt = db.prepare('UPDATE contacts SET photo_url = ? WHERE id = ?');
             stmt.run(photo_url, contact_id);
@@ -139,9 +133,9 @@ export const database = {
     },
 
     phoneNumbers: {
-        findByContactId: async (contact_id: number): Promise<any[]> => {
+        findByContactId: async (contact_id: number): Promise<PhoneNumber[]> => {
             const stmt = db.prepare('SELECT * FROM phone_numbers WHERE contact_id = ?');
-            return stmt.all(contact_id);
+            return stmt.all(contact_id) as PhoneNumber[];
         },
 
         create: async ({ contact_id, phone_number, label = null }: any): Promise<number> => {
