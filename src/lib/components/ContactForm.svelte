@@ -11,7 +11,7 @@
     <div class="col-12 col-md-3">
         <div class="d-flex flex-column align-items-center">
             <label for="contactPhoto">{$_('contacts.photo_alt')}</label>
-            {#if contact.photo_url}
+            {#if contact.photo_url && !remove_photo && !photo_file}
                 <img src={`/api/v1/photos/thumb_${contact.photo_url}`} alt="Contact Photo" width="90" height="90" class="border mb-2" />
             {/if}
             <canvas width="90" height="90" class="border" bind:this={canvas}></canvas>

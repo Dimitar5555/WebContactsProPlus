@@ -57,7 +57,7 @@
             <label for="username" class="form-label">{$_('login.username')}</label>
             <input 
             type="text"
-            name="username"
+            id="username"
             required
             bind:value={username}
             class="form-control"
@@ -67,7 +67,7 @@
             <label for="password" class="form-label">{$_('login.password')}</label>
             <input 
             type="password"
-            name="password"
+            id="password"
             required
             bind:value={password}
             class="form-control"

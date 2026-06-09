@@ -14,7 +14,7 @@ This is a group project for the Web Technologies course at Faculty of Mathematic
 ## Architecture
 
 - Frontend: SvelteKit + Bootstrap
-- Backend: Node.js with Express
+- Backend: SvelteKit API routes
 - Database: SQLite
 - Authentication: JWT (JSON Web Tokens)
 - Testing: Vitest

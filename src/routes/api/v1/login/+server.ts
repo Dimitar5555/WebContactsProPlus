@@ -14,7 +14,7 @@ export async function POST({
         const { token, maxAge } = await authService.login(data.username, data.password);
         cookies.set('token', token, {
             httpOnly: true,
-            secure: true,
+            secure: import.meta.env.PROD,
             sameSite: 'lax',
             maxAge,
             path: '/'

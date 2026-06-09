@@ -46,7 +46,7 @@ export async function deleteContact(contactId: number): Promise<Message> {
             fetch(`/api/v1/contacts/${contactId}`, { method: 'DELETE' })
         ]);
 
-        if(contactRes.ok) {
+        if(contactRes.ok && photoRes.ok) {
             return {
                 text: 'api.contacts.delete.success',
                 type: 'success'
