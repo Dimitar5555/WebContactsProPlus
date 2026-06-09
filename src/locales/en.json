@@ -24,13 +24,23 @@
             "delete_success": "Photo deleted successfully"
         },
         "contacts": {
-            "missing_fields": "Missing required fields",
-            "success_update": "Contact updated successfully",
-            "success_delete": "Contact deleted successfully",
+            "update": {
+                "success": "Contact updated successfully",
+                "failed": "Failed to update contact"
+            },
+            "delete": {
+                "success": "Contact deleted successfully",
+                "failed": "Failed to delete contact"
+            },
+            "create": {
+                "success": "Contact created successfully",
+                "failed": "Failed to create contact"
+            },
             "favourite": {
                 "added": "Contact added to favourites",
                 "removed": "Contact removed from favourites"
-            }
+            },
+            "missing_fields": "Missing required fields"
         }
     },
     "navigation": {
@@ -73,10 +83,6 @@
     "contacts": {
         "add": "Add Contact",
         "my_contacts": "My Contacts",
-        "edit": {
-            "success_update": "Contact updated successfully",
-            "failed_update": "Failed to update contact"
-        },
         "actions": {
             "view": "View",
             "edit": "Edit",

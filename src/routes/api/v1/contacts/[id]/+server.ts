@@ -73,7 +73,7 @@ export async function PUT({ params, request, locals }: any) {
     }
 
     return json(
-        { message: 'api.contacts.success_update' },
+        { message: 'api.contacts.update.success' },
         { status: 200 }
     );
 }
@@ -99,7 +99,7 @@ export async function DELETE({ params, locals }) {
     await database.contacts.delete(contactId);
 
     return json(
-        { message: 'api.contacts.success_delete' },
+        { message: 'api.contacts.delete.success' },
         { status: 200 }
     );
 }

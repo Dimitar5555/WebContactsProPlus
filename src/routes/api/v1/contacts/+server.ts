@@ -38,7 +38,7 @@ export async function POST({ request, locals }) {
 
     return json(
         {
-            message: 'contacts.success_create',
+            message: 'api.contacts.create.success',
             contactId: newContactId
         },
         { status: 201 }

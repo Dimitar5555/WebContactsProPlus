@@ -48,7 +48,7 @@ export async function deleteContact(contactId: number): Promise<Message> {
 
         if(contactRes.ok) {
             return {
-                text: 'contacts.delete_success',
+                text: 'api.contacts.delete.success',
                 type: 'success'
             };
         }
@@ -56,7 +56,7 @@ export async function deleteContact(contactId: number): Promise<Message> {
     }
     catch (error) {
         return {
-            text: 'contacts.delete_error1',
+            text: 'api.contacts.delete.failed',
             type: 'error'
         };
     }
