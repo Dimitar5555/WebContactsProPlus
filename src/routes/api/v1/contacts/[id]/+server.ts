@@ -92,8 +92,8 @@ export async function DELETE({ params, locals }) {
         return error(404, 'api.generic.not_found');
     }
 
-    if(contact.photo_path) {
-        await deletePhoto(contact.photo_path);
+    if(contact.photo_url) {
+        await deletePhoto(contact.photo_url);
     }
 
     await database.contacts.delete(contactId);

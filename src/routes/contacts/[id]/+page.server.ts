@@ -12,10 +12,7 @@ export const load: PageServerLoad = async ({
     if(isNaN(contact_id)) {
         return {} as any;
     }
-    const contact = await database.contacts.findById(
-        contact_id,
-        locals.user.id
-    );
+    const contact = await database.contacts.findById(contact_id);
     if(!contact) {
         return {} as any;
     }

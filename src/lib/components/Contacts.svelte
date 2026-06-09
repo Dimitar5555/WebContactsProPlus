@@ -1,6 +1,6 @@
 <script lang="ts">
     import { _ } from "svelte-i18n";
-    import { ContactStore } from "$lib/state/contacts.svelte.ts";
+    import { ContactStore } from "$lib/state/contacts.svelte";
 
     let { store }: { store: ContactStore } = $props();
     let searchQuery: string = $state('');
@@ -58,8 +58,8 @@
     }
     function rightClickContextMenu(e: MouseEvent) {
         e.preventDefault();
-        currentContactId = parseInt((e.currentTarget as HTMLAnchorElement).dataset.contactId)
-        showMenu = true
+        currentContactId = parseInt((e.currentTarget as HTMLAnchorElement).dataset.contactId!);
+        showMenu = true;
         browser = {
             w: window.innerWidth,
             h: window.innerHeight
@@ -180,7 +180,7 @@
                     <button onclick={item.onClick}>
                         <i class={item.class}></i>
                         {#if item.displayTextFunction}
-                            {item.displayTextFunction(store.contacts.find(c => c.id === currentContactId))}
+                            {item.displayTextFunction(store.contacts.find(c => c.id === currentContactId)!)}
                         {:else if item.displayText}
                             {item.displayText}
                         {/if}

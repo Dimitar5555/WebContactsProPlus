@@ -3,7 +3,7 @@
     let { data = $bindable(), photo_file = $bindable(), remove_photo = $bindable(), saveBtnLabel }: any = $props();
     let contact = $state(data.contact);
     let phoneNumbers = $state(data.phone_numbers);
-    let canvas = $state<HTMLCanvasElement>();
+    let canvas: HTMLCanvasElement;
 </script>
 
 <input type="hidden" name="contact_id" bind:value={contact.id} />

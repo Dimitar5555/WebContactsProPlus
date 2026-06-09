@@ -21,8 +21,8 @@ function validateForm(email: string, username: string, password: string): boolea
     return true;
 }
 
-export async function POST({ request, response }: { request: Request, response: Response }) {
-    const data = await request.json();
+export async function POST({ request }: { request: Request }) {
+    const data: { username: string; email: string; password: string } = await request.json();
     const username = data.username?.toString().trim();
     const password = data.password?.toString() ?? '';
     const hashedPassword = bcrypt.hashSync(password, 10);

@@ -1,8 +1,8 @@
 <script lang="ts">
     import { _ } from 'svelte-i18n';
     import type { PageProps } from './$types';
-    import { ContactStore } from '$lib/state/contacts.svelte.ts';
-    import { ToastStore } from '$lib/state/toasts.svelte.ts';
+    import { ContactStore } from '$lib/state/contacts.svelte';
+    import { ToastStore } from '$lib/state/toasts.svelte';
     import InternalNavigation from '$lib/components/InternalNavigation.svelte';
     import Contacts from '$lib/components/Contacts.svelte';
     import ToastPanel from '$lib/components/ToastPanel.svelte';

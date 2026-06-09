@@ -6,10 +6,7 @@ export const load: PageServerLoad = async ({
     params
 }: any): Promise<{ contact: Contact; phone_numbers: PhoneNumber[] }> => {
     const contact_id = parseInt(params.id);
-    const contact = await database.contacts.findById(
-        contact_id,
-        (locals.user as any).id
-    );
+    const contact = await database.contacts.findById(contact_id);
     if(!contact) {
         return {} as any;
     }
