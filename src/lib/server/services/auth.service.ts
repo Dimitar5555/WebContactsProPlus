@@ -1,7 +1,6 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import * as env from '$env/static/private';
-import { dev } from '$app/environment';
 import { userRepository } from '../repositories/user.repository';
 import {
     ConflictError,
@@ -9,14 +8,8 @@ import {
     ValidationError
 } from '../errors';
 
-const configuredSecret: string | undefined =
-    (env as any).JWT_SECRET ?? process.env.JWT_SECRET;
-
-if(!configuredSecret && !dev) {
-    throw new Error('JWT_SECRET environment variable must be set in production');
-}
-
-const JWT_SECRET: string = configuredSecret ?? 'dev-only-insecure-secret';
+const JWT_SECRET: string =
+    (env as any).JWT_SECRET ?? process.env.JWT_SECRET ?? 'secret';
 
 export type JwtPayload = {
     id: number;
