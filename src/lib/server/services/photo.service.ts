@@ -38,7 +38,7 @@ function ensureUploadDir(): void {
     }
     catch (err) {
         console.error('Error creating upload directory:', err);
-        process.exit(1);
+        throw err;
     }
 }
 
@@ -71,16 +71,10 @@ async function removePhotoFiles(filename: string): Promise<void> {
     const filePath = path.join(uploadDir, filename);
     const thumbPath = path.join(uploadDir, `thumb_${filename}`);
 
-    await fs.unlink(filePath, err => {
-        if(err) {
-            console.error('Failed to delete file:', err);
-        }
-    });
-    await fs.unlink(thumbPath, err => {
-        if(err) {
-            console.error('Failed to delete thumbnail:', err);
-        }
-    });
+    await Promise.allSettled([
+        fs.promises.unlink(filePath),
+        fs.promises.unlink(thumbPath)
+    ]);
 }
 
 async function fetchOwnedContact(contactId: number, userId: number): Promise<Contact> {

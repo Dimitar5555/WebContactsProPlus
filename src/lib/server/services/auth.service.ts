@@ -1,6 +1,5 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import * as env from '$env/static/private';
 import { userRepository } from '../repositories/user.repository';
 import {
     ConflictError,
@@ -8,8 +7,10 @@ import {
     ValidationError
 } from '../errors';
 
-const JWT_SECRET: string =
-    (env as any).JWT_SECRET ?? process.env.JWT_SECRET ?? 'secret';
+const JWT_SECRET: string = process.env.JWT_SECRET ?? '';
+if(!JWT_SECRET) {
+    throw new Error('JWT_SECRET must be set');
+}
 
 export type JwtPayload = {
     id: number;
