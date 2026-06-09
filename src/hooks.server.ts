@@ -12,7 +12,7 @@ const first: Handle = async ({ event, resolve }) => {
     return await resolve(event);
 };
 
-const second: Handle = async ({ event, resolve }: any) => {
+const second: Handle = async ({ event, resolve }) => {
     const pathname = event.url.pathname;
     const token = event.cookies.get('token');
 
