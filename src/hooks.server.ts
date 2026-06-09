@@ -1,8 +1,7 @@
 import { sequence } from '@sveltejs/kit/hooks';
 import { redirect, type Handle } from '@sveltejs/kit';
 import { locale } from 'svelte-i18n';
-import jwt from 'jsonwebtoken';
-import * as env from '$env/static/private';
+import { authService } from '$lib/server/services/auth.service';
 
 const first: Handle = async ({ event, resolve }) => {
     const lang = event.cookies.get('lang');
@@ -17,10 +16,11 @@ const second: Handle = async ({ event, resolve }) => {
     const token = event.cookies.get('token');
 
     if(token) {
-        try {
-            event.locals.user = jwt.verify(token, env.JWT_SECRET) as any;
+        const payload = authService.verifyToken(token);
+        if(payload) {
+            event.locals.user = payload as any;
         }
-    catch {
+        else {
             event.locals.user = null;
             event.cookies.delete('token', { path: '/' });
         }
