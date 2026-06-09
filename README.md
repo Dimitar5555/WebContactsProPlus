@@ -106,3 +106,4 @@ Three named volumes survive `docker compose down`:
 - `letsencrypt-www` — webroot for the ACME challenge
 
 `docker compose down -v` wipes them — including users and certs.
+
