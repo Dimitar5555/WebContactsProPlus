@@ -1,9 +1,7 @@
 import Database from 'better-sqlite3';
 import bcrypt from 'bcrypt';
-import { dev } from '$app/environment';
 
 export const db = new Database('app.db');
-db.pragma('foreign_keys = ON');
 
 db.exec(`
     CREATE TABLE IF NOT EXISTS users (
@@ -35,7 +33,7 @@ db.exec(`
 `);
 
 const userCount = db.prepare('SELECT COUNT(*) as count FROM users').get() as { count: number };
-if(dev && userCount.count === 0) {
+if(userCount.count === 0) {
     const hashedPassword1 = bcrypt.hashSync('password1', 10);
     const hashedPassword2 = bcrypt.hashSync('password2', 10);
     const insertUser = db.prepare('INSERT INTO users (username, password, email) VALUES (?, ?, ?)');
