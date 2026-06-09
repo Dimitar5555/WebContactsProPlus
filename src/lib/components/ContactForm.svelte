@@ -1,4 +1,5 @@
 <script lang="ts">
+    import "$lib/assets/contacts.css";
     import { _ } from 'svelte-i18n';
     let { data = $bindable(), photo_file = $bindable(), remove_photo = $bindable(), saveBtnLabel }: any = $props();
     let contact = $state(data.contact);
@@ -12,7 +13,7 @@
         <div class="d-flex flex-column align-items-center">
             <label for="contactPhoto">{$_('contacts.photo_alt')}</label>
             {#if contact.photo_url && !remove_photo && !photo_file}
-                <img src={`/api/v1/photos/thumb_${contact.photo_url}`} alt="Contact Photo" width="90" height="90" class="border mb-2" />
+                <img src={`/api/v1/photos/thumb_${contact.photo_url}`} alt="Contact Photo" class="border mb-2 contact-photo-thumb" />
             {/if}
             <canvas width="90" height="90" class="border" bind:this={canvas}></canvas>
             <input class="form-control" type="file" id="contactPhoto" name="contactPhoto" accept="image/*" onchange={async (e) => {
