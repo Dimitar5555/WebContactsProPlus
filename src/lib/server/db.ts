@@ -31,6 +31,13 @@ db.exec(`
         FOREIGN KEY(contact_id) REFERENCES contacts(id) ON DELETE CASCADE,
         CHECK(label IN ('HOME', 'WORK', 'MOBILE') OR label IS NULL)
     );
+
+    CREATE TABLE IF NOT EXISTS refresh_tokens (
+        token TEXT PRIMARY KEY,
+        user_id INTEGER NOT NULL,
+        expires_at INTEGER NOT NULL,
+        FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+    );
 `);
 
 const userCount = db.prepare('SELECT COUNT(*) as count FROM users').get() as { count: number };

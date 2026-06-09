@@ -9,6 +9,10 @@ export const userRepository = {
         return db.prepare('SELECT * FROM users WHERE email = ?').get(email) as User | undefined;
     },
 
+    findById: async (id: number): Promise<User | undefined> => {
+        return db.prepare('SELECT * FROM users WHERE id = ?').get(id) as User | undefined;
+    },
+
     create: async ({ username, password, email }: { username: string; password: string; email: string }): Promise<number> => {
         const stmt = db.prepare('INSERT INTO users (username, password, email) VALUES (?, ?, ?)');
         const result = stmt.run(username, password, email);

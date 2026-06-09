@@ -11,7 +11,7 @@ export async function POST({
 }) {
     const data = await request.json();
     try {
-        const { token, maxAge } = await authService.login(data.username, data.password);
+        const { token, maxAge, userId } = await authService.login(data.username, data.password);
         cookies.set('token', token, {
             httpOnly: true,
             secure: import.meta.env.PROD,
@@ -19,6 +19,16 @@ export async function POST({
             maxAge,
             path: '/'
         });
+
+        const { token: refreshToken, maxAge: refreshMaxAge } = await authService.issueRefreshToken(userId);
+        cookies.set('refresh', refreshToken, {
+            httpOnly: true,
+            secure: import.meta.env.PROD,
+            sameSite: 'lax',
+            maxAge: refreshMaxAge,
+            path: '/api/v1/refresh'
+        });
+
         return json({ message: 'api.login.success' });
     }
     catch (e) {

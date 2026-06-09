@@ -24,6 +24,12 @@ type PhoneNumber = {
     label?: phoneNumberLabel;
 };
 
+type RefreshToken = {
+    token: string;
+    user_id: number;
+    expires_at: number;
+};
+
 type ContactWithPhones = {
     contact: Contact;
     phones: PhoneNumber[];
