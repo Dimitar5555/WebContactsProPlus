@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import { JWT_SECRET } from '$env/static/private';
 import { userRepository } from '../repositories/user.repository';
 import {
     ConflictError,
@@ -7,7 +8,6 @@ import {
     ValidationError
 } from '../errors';
 
-const JWT_SECRET: string = process.env.JWT_SECRET ?? '';
 if(!JWT_SECRET) {
     throw new Error('JWT_SECRET must be set');
 }
