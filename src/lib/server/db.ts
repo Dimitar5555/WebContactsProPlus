@@ -34,7 +34,7 @@ db.exec(`
 `);
 
 const userCount = db.prepare('SELECT COUNT(*) as count FROM users').get() as { count: number };
-if(process.env.NODE_ENV === 'development' && userCount.count === 0) {
+if(userCount.count === 0) {
     const hashedPassword1 = bcrypt.hashSync('password1', 10);
     const hashedPassword2 = bcrypt.hashSync('password2', 10);
     const insertUser = db.prepare('INSERT INTO users (username, password, email) VALUES (?, ?, ?)');
