@@ -1,4 +1,5 @@
 import fs from 'fs';
+import fsp from 'fs/promises';
 import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
 import sharp from 'sharp';
@@ -33,13 +34,7 @@ function ensureUploadDir(): void {
     if(fs.existsSync(uploadDir)) {
         return;
     }
-    try {
-        fs.mkdirSync(uploadDir);
-    }
-    catch (err) {
-        console.error('Error creating upload directory:', err);
-        process.exit(1);
-    }
+    fs.mkdirSync(uploadDir, { recursive: true });
 }
 
 async function persistFile(blob: Blob): Promise<string> {
@@ -71,16 +66,18 @@ async function removePhotoFiles(filename: string): Promise<void> {
     const filePath = path.join(uploadDir, filename);
     const thumbPath = path.join(uploadDir, `thumb_${filename}`);
 
-    await fs.unlink(filePath, err => {
-        if(err) {
-            console.error('Failed to delete file:', err);
-        }
-    });
-    await fs.unlink(thumbPath, err => {
-        if(err) {
-            console.error('Failed to delete thumbnail:', err);
-        }
-    });
+    await Promise.all([
+        fsp.unlink(filePath).catch(err => {
+            if(err.code !== 'ENOENT') {
+                throw err;
+            }
+        }),
+        fsp.unlink(thumbPath).catch(err => {
+            if(err.code !== 'ENOENT') {
+                throw err;
+            }
+        })
+    ]);
 }
 
 async function fetchOwnedContact(contactId: number, userId: number): Promise<Contact> {
@@ -99,7 +96,7 @@ export const photoService = {
     deletePhotoFiles: removePhotoFiles,
 
     attachToContact: async (contactId: number, userId: number, blob: Blob): Promise<string> => {
-        if(!blob) {
+        if(!blob || blob.size === 0) {
             throw new ValidationError('api.photo.no_file_uploaded');
         }
         if(!ALLOWED_MIME_TYPES.includes(blob.type)) {
