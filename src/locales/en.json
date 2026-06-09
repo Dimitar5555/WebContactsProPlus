@@ -82,7 +82,8 @@
     },
     "contacts": {
         "add": "Add Contact",
-        "my_contacts": "My Contacts",
+        "all_contacts": "All Contacts",
+        "favourite_contacts": "Favourite Contacts",
         "actions": {
             "view": "View",
             "edit": "Edit",
@@ -117,8 +118,5 @@
         "last_name": "Last name",
         "phone_numbers": "Phone numbers",
         "add_phone": "Add phone number"
-    },
-    "favourite_contacts": {
-        "title": "Favourite Contacts"
     }
 }

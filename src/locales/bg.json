@@ -82,7 +82,8 @@
     },
     "contacts": {
         "add": "Добави контакт",
-        "my_contacts": "Моите контакти",
+        "all_contacts": "Всички контакти",
+        "favourite_contacts": "Любими контакти",
         "actions": {
             "view": "Прегледай",
             "edit": "Редактирай",
@@ -117,8 +118,5 @@
         "last_name": "Фамилия",
         "phone_numbers": "Телефонни номера",
         "add_phone": "Добави телефонен номер"
-    },
-    "favourite_contacts": {
-        "title": "Любими контакти"
     }
 }
