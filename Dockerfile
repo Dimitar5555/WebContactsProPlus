@@ -7,6 +7,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         python3 make g++ \
     && rm -rf /var/lib/apt/lists/*
 
+# SvelteKit resolves `$env/static/private` at build time, so JWT_SECRET must be
+# present during `npm run build`. Compose passes it via build args from .env.
+ARG JWT_SECRET
+ENV JWT_SECRET=$JWT_SECRET
+
 COPY package*.json ./
 RUN npm ci
 

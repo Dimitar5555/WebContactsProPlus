@@ -1,6 +1,9 @@
 services:
   app:
-    build: .
+    build:
+      context: .
+      args:
+        JWT_SECRET: ${JWT_SECRET}
     image: webcontactsproplus:latest
     container_name: wcpp-app
     restart: unless-stopped
