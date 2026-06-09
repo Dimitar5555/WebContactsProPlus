@@ -23,3 +23,9 @@ vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 
 /photos
+
+# docs: only the TikZ sources are tracked; everything else is generated
+docs/**
+!docs/
+!docs/diagrams/
+!docs/diagrams/*.tex

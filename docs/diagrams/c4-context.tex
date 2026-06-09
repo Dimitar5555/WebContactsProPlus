@@ -1,0 +1,75 @@
+% WebContactsProPlus — C4 Level 1: System Context
+\documentclass[border=14pt]{standalone}
+\usepackage{tikz}
+\usetikzlibrary{positioning, arrows.meta, shapes.geometric, calc}
+
+\definecolor{c4person}{HTML}{08427B}
+\definecolor{c4system}{HTML}{1168BD}
+\definecolor{c4ext}{HTML}{999999}
+
+\begin{document}
+\begin{tikzpicture}[
+    >=Stealth,
+    font=\sffamily,
+    node distance=70pt and 80pt,
+    person/.style={
+        draw=c4person!50!black, fill=c4person, text=white, line width=0.8pt,
+        rectangle, rounded corners=4pt,
+        minimum width=130pt, minimum height=78pt,
+        align=center,
+    },
+    system/.style={
+        draw=c4system!50!black, fill=c4system, text=white, line width=0.8pt,
+        rectangle, rounded corners=4pt,
+        minimum width=160pt, minimum height=90pt,
+        align=center,
+    },
+    ext/.style={
+        draw=c4ext!50!black, fill=c4ext, text=white, line width=0.8pt,
+        rectangle, rounded corners=4pt,
+        minimum width=140pt, minimum height=80pt,
+        align=center,
+    },
+    arrow/.style={->, line width=0.8pt, draw=black!60},
+    lbl/.style={font=\sffamily\scriptsize, fill=white, inner sep=2pt, align=center},
+]
+
+% --- people ---
+\node[person] (user) {
+    \textbf{End User} \\[2pt]
+    {\scriptsize [Person]} \\[2pt]
+    {\scriptsize Anyone who wants to keep} \\
+    {\scriptsize a personal address book}
+};
+
+% --- system in scope ---
+\node[system, right=of user] (wcpp) {
+    \textbf{WebContactsProPlus} \\[2pt]
+    {\scriptsize [Software System]} \\[2pt]
+    {\scriptsize SvelteKit web app ---} \\
+    {\scriptsize manage contacts, phone} \\
+    {\scriptsize numbers, and photos}
+};
+
+% --- external systems ---
+\node[ext, right=of wcpp] (le) {
+    \textbf{Let's Encrypt} \\[2pt]
+    {\scriptsize [External System]} \\[2pt]
+    {\scriptsize Issues + renews TLS} \\
+    {\scriptsize certificates via ACME}
+};
+
+\node[ext, below=70pt of wcpp] (vps) {
+    \textbf{VPS Host} \\[2pt]
+    {\scriptsize [External System]} \\[2pt]
+    {\scriptsize Ubuntu VPS that runs} \\
+    {\scriptsize the Docker stack}
+};
+
+% --- relations ---
+\draw[arrow] (user) -- node[lbl] {Manages contacts \\ via web browser \\ {\scriptsize [HTTPS]}} (wcpp);
+\draw[arrow] (wcpp) -- node[lbl] {Requests + renews \\ TLS certificates \\ {\scriptsize [ACME / HTTP-01]}} (le);
+\draw[arrow] (wcpp) -- node[lbl] {Deployed on \\ {\scriptsize [SSH + docker compose]}} (vps);
+
+\end{tikzpicture}
+\end{document}
