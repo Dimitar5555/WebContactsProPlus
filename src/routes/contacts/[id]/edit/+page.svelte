@@ -66,6 +66,7 @@
                 bind:data={dataState}
                 bind:photo_file={photo_file}
                 bind:remove_photo={remove_photo}
+                availableTags={data.tags}
                 saveBtnLabel={'contacts.actions.save'}
             />
         </form>

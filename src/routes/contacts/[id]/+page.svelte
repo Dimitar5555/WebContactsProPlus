@@ -9,9 +9,37 @@
     import BackButton from '$lib/components/BackButton.svelte';
     import ToastPanel from '$lib/components/ToastPanel.svelte';
     import { ToastStore } from '$lib/state/toasts.svelte';
+    import TagPicker from '$lib/components/TagPicker.svelte';
+    import { addTagToContact, removeTagFromContact } from '$lib/api/tags';
     import parsePhoneNumber from 'libphonenumber-js';
+    import { onMount } from 'svelte';
 
     const toastStore = new ToastStore();
+    let { data }: PageProps = $props();
+    let currentTags = $state<Tag[]>([]);
+
+    onMount(() => {
+        currentTags = data.contact?.tags ?? [];
+    });
+
+    async function toggleTag(tagId: number) {
+        if(!data.contact) {
+            return;
+        }
+        const hasTag = currentTags.some((tag) => tag.id === tagId);
+        const result = hasTag
+            ? await removeTagFromContact(data.contact.id, tagId)
+            : await addTagToContact(data.contact.id, tagId);
+        toastStore.add(result.message, result.type);
+        if(result.type === 'success') {
+            const tag = data.tags.find((item) => item.id === tagId);
+            if(tag) {
+                currentTags = hasTag
+                    ? currentTags.filter((item) => item.id !== tagId)
+                    : [...currentTags, tag];
+            }
+        }
+    }
     async function handleDelete(contactId: number) {
         const result = await deleteContact(contactId);
         if(result.type === 'success') {
@@ -33,7 +61,6 @@
             .replace(/./g, (char) => String.fromCodePoint(char.charCodeAt(0) + 127397));
     }
 
-    let { data }: PageProps = $props();
 </script>
 
 <InternalNavigation />
@@ -74,6 +101,9 @@
                                     <i class="bi bi-heart-fill me-1"></i>{$_('contacts.is_favourite')}
                                 </span>
                             {/if}
+                        </div>
+                        <div class="mt-3">
+                            <TagPicker availableTags={data.tags} selectedTags={currentTags} onToggle={toggleTag} />
                         </div>
                     </div>
 

@@ -15,6 +15,22 @@ type Contact = {
     photo_url?: string;
     is_favourite: boolean;
     notes?: string;
+    tags?: Tag[];
+};
+
+type Tag = {
+    id: number;
+    user_id: number;
+    label: string;
+    color: string;
+};
+
+type TagWithCount = Tag & {
+    contact_count: number;
+};
+
+type TagWithCount = Tag & {
+    contact_count: number;
 };
 
 type PhoneNumber = {
@@ -30,6 +46,7 @@ type ContactWithPhones = Contact & {
 
 type CreateContactPayload = Omit<ContactWithPhones, 'id' | 'user_id' | 'is_favourite'> & {
     phone_numbers: Omit<PhoneNumber, 'id' | 'contact_id'>[];
+    tags?: Tag[];
 };
 
 type Message = {

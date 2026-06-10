@@ -1,9 +1,24 @@
 <script lang="ts">
     import "$lib/assets/contacts.css";
     import { _ } from 'svelte-i18n';
-    let { data = $bindable(), photo_file = $bindable(), remove_photo = $bindable(), saveBtnLabel }: any = $props();
+    import TagPicker from './TagPicker.svelte';
+    let { data = $bindable(), photo_file = $bindable(), remove_photo = $bindable(), availableTags = [], saveBtnLabel }: any = $props();
     let contact = $state(data);
     let canvas: HTMLCanvasElement;
+
+    function toggleTag(tagId: number) {
+        contact.tags = contact.tags || [];
+        const tag = availableTags.find((item: Tag) => item.id === tagId);
+        if(!tag) {
+            return;
+        }
+        if(contact.tags.some((item: Tag) => item.id === tagId)) {
+            contact.tags = contact.tags.filter((item: Tag) => item.id !== tagId);
+        }
+        else {
+            contact.tags = [...contact.tags, tag];
+        }
+    }
 </script>
 <input type="hidden" name="contact_id" bind:value={contact.id} />
 <input type="hidden" name="photoURL" bind:value={contact.photo_url} />
@@ -126,6 +141,11 @@
             <div class="mb-4">
                 <label class="form-label fw-semibold text-dark small" for="notesInput">{$_('contacts.notes')}</label>
                 <textarea class="form-control px-3 py-2" id="notesInput" name="notes" rows="4" bind:value={contact.notes}></textarea>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label fw-semibold text-dark small d-block mb-2">{$_('contacts.tags.manage_title')}</label>
+                <TagPicker availableTags={availableTags} selectedTags={contact.tags || []} onToggle={toggleTag} />
             </div>
 
             <!-- Submission Actions Layout footer -->

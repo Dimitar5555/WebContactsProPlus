@@ -1,9 +1,10 @@
 <script lang="ts">
     import "$lib/assets/contacts.css";
+    import { goto } from '$app/navigation';
     import { _ } from "svelte-i18n";
     import { ContactStore } from "$lib/state/contacts.svelte";
 
-    let { store }: { store: ContactStore } = $props();
+    let { store, availableTags = [], selectedTagId = null, showOnlyFavourites = false }: { store: ContactStore; availableTags?: Tag[]; selectedTagId?: number | null; showOnlyFavourites?: boolean } = $props();
     let searchQuery: string = $state('');
     let filteredContacts = $derived(store.contacts.filter(contact => {
         return searchQuery === "" ||
@@ -11,6 +12,23 @@
                 .toLowerCase()
                 .includes(searchQuery.toLowerCase());
     }));
+
+    function updateTagFilter(value: string) {
+        const url = new URL(window.location.href);
+        if(value) {
+            url.searchParams.set('tag', value);
+        }
+        else {
+            url.searchParams.delete('tag');
+        }
+        if(showOnlyFavourites) {
+            url.searchParams.set('filter', 'favourites');
+        }
+        else {
+            url.searchParams.delete('filter');
+        }
+        goto(`${url.pathname}${url.search}${url.hash}`);
+    }
     // https://svelte.dev/playground/6fb90919e24942b2b47d9ad154386b0c?version=5.56.0
     // pos is cursor position when right click occur
     let pos = { x: 0, y: 0 }
@@ -123,32 +141,85 @@
 </nav>
 {/if}
 
-<input type="text" placeholder={$_('contacts.search')} bind:value={searchQuery} class="form-control mb-3" />
+<div class="card border-0 shadow-sm rounded-4 p-3 mb-3">
+    <div class="row g-2 align-items-end">
+        <div class="col-12 col-md-7">
+            <label class="form-label small fw-semibold" for="contactSearch">{$_('contacts.search')}</label>
+            <input id="contactSearch" type="text" placeholder={$_('contacts.search')} bind:value={searchQuery} class="form-control" />
+        </div>
+        <div class="col-12 col-md-5">
+            <label class="form-label small fw-semibold" for="tagFilter">{$_('contacts.filter_by_tag')}</label>
+            <select
+                class="form-select"
+                id="tagFilter"
+                bind:value={selectedTagId}
+                onchange={(event) => updateTagFilter((event.currentTarget as HTMLSelectElement).value)}
+            >
+                <option value={0} selected>{$_('contacts.all_tags')}</option>
+                {#each availableTags as tag}
+                    <option value={tag.id}>{tag.label}</option>
+                {/each}
+            </select>
+        </div>
+    </div>
+</div>
 {#if filteredContacts.length > 0}
     <div>
         {#each filteredContacts as contact}
-            <a
-                href={`/contacts/${contact.id}`}
+            <!-- svelte-ignore a11y_no_static_element_interactions -->
+            <div
                 class="contact-item d-flex justify-content-between"
                 oncontextmenu={rightClickContextMenu}    
                 data-contact-id={contact.id}
             >
-                <span>
-                    {#if contact.photo_url}
-                        <img src={'/api/v1/photos/thumb_' + contact.photo_url} class="rounded-circle me-2 contact-photo-thumb" />
-                    {:else}
-                        <div class="rounded-circle me-2 d-inline-block text-center align-middle contact-photo-thumb contact-photo-placeholder">
-                            <i class="bi bi-person-fill"></i>
+                <a href={`/contacts/${contact.id}`} class="text-decoration-none text-reset flex-grow-1">
+                    <div class="d-flex flex-row gap-1">
+                        {#if contact.photo_url}
+                            <!-- svelte-ignore a11y_missing_attribute -->
+                            <img src={'/api/v1/photos/thumb_' + contact.photo_url} class="rounded-circle me-2 contact-photo-thumb" />
+                        {:else}
+                            <div class="rounded-circle me-2 d-inline-block text-center align-middle contact-photo-thumb contact-photo-placeholder">
+                                <i class="bi bi-person-fill"></i>
+                            </div>
+                        {/if}
+                        <div class="d-flex flex-column">
+                            <span>{contact.first_name} {contact.last_name}</span>
+                            <div>
+                                {#if contact.tags && contact.tags.length > 0}
+                                    <span class="tag-chip-row">
+                                        {#each contact.tags as tag}
+                                            <span class="contact-tag-chip" style={`background-color: ${tag.color};`}>{tag.label}</span>
+                                        {/each}
+                                    </span>
+                                {/if}
+                            </div>
                         </div>
-                    {/if}
-                    {contact.first_name} {contact.last_name}
-                </span>
-                <span>
+                    </div>
+                </a>
+                <div class="d-flex align-items-center gap-2 ms-3">
                     {#if contact.is_favourite}
-                    <i class="bi bi-heart-fill"></i>
+                        <i class="bi bi-heart-fill"></i>
                     {/if}
-                </span>
-            </a>
+                    {#if store.tags.length > 0}
+                        <details class="tag-picker-details">
+                            <summary class="btn btn-sm btn-outline-secondary">{$_('contacts.tags.manage_title')}</summary>
+                            <div class="tag-picker-popover shadow-sm">
+                                {#each store.tags as tag}
+                                    <button
+                                        type="button"
+                                        class:active={(contact.tags || []).some((item) => item.id === tag.id)}
+                                        class="btn btn-sm btn-outline-secondary w-100 text-start mb-1"
+                                        onclick={() => store.toggleTag(contact.id, tag.id)}
+                                    >
+                                        <span class="contact-tag-chip me-2" style={`background-color: ${tag.color};`}>{tag.label}</span>
+                                        <i class={((contact.tags || []).some((item) => item.id === tag.id) ? 'bi bi-check2' : 'bi bi-plus')}></i>
+                                    </button>
+                                {/each}
+                            </div>
+                        </details>
+                    {/if}
+                </div>
+            </div>
         {/each}
     </div>
 {:else if searchQuery.length > 0}

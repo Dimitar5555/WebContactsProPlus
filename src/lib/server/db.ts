@@ -31,6 +31,23 @@ db.exec(`
         FOREIGN KEY(contact_id) REFERENCES contacts(id) ON DELETE CASCADE,
         CHECK(label IN ('HOME', 'WORK', 'MOBILE') OR label IS NULL)
     );
+
+    CREATE TABLE IF NOT EXISTS tags (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        label TEXT NOT NULL,
+        color TEXT NOT NULL,
+        FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
+        UNIQUE(user_id, label)
+    );
+
+    CREATE TABLE IF NOT EXISTS contact_tags (
+        contact_id INTEGER NOT NULL,
+        tag_id INTEGER NOT NULL,
+        PRIMARY KEY(contact_id, tag_id),
+        FOREIGN KEY(contact_id) REFERENCES contacts(id) ON DELETE CASCADE,
+        FOREIGN KEY(tag_id) REFERENCES tags(id) ON DELETE CASCADE
+    );
 `);
 
 const userCount = db.prepare('SELECT COUNT(*) as count FROM users').get() as { count: number };

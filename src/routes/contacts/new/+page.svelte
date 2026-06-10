@@ -7,12 +7,14 @@
     import { _ } from 'svelte-i18n';
 
     const toastStore = new ToastStore();
+    let { data }: { data: { tags: Tag[] } } = $props();
     let dataState = $state({
         first_name: '',
         last_name: '',
         notes: '',
-        phone_numbers: [{phone_number: '', label: null}]
-    } as CreateContactPayload);
+        phone_numbers: [{phone_number: '', label: null}],
+        tags: []
+    } as unknown as CreateContactPayload);
     let photo_file = $state(null);
     let remove_photo = $state(false);
 
@@ -56,6 +58,7 @@
             bind:data={dataState}
             bind:photo_file={photo_file}
             bind:remove_photo={remove_photo}
+            availableTags={data.tags}
             saveBtnLabel={'contacts.actions.create'}    
         />
     </form>
