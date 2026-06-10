@@ -1,4 +1,4 @@
-type phoneNumberLabel = 'HOME' | 'WORK' | 'MOBILE';
+type phoneNumberLabel = 'HOME' | 'WORK' | 'MOBILE' | null;
 
 type User = {
     id: number;
@@ -42,10 +42,4 @@ type Toast = {
     message: string;
     type: 'success' | 'warning' | 'error';
     timeoutId: number;
-};
-
-type ApiResponse<T> = {
-    success: boolean;
-    message?: string;
-    data?: T;
 };
