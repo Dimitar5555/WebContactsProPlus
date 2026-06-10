@@ -24,6 +24,9 @@
                 <li class="nav-item">
                     <a class="nav-link" href="/contacts?filter=favourites">{$_('navigation.favourite_contacts')}</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/tags">{$_('navigation.manage_tags')}</a>
+                </li>
             </ul>
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
