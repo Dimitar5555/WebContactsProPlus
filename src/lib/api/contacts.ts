@@ -14,20 +14,19 @@ export async function toggleFavourite(contactId: number): Promise<Message> {
         const data = await response.json();
         if(response.ok) {
             return {
-                text: data.message,
+                message: data.message,
                 type: 'success'
             };
         }
         else {
             return {
-                text: data.message,
                 type: 'error'
             };
         }
     }
     catch (error) {
         return {
-            text: 'api.generic_error',
+            message: 'api.generic_error',
             type: 'error'
         };
     }
@@ -36,7 +35,7 @@ export async function toggleFavourite(contactId: number): Promise<Message> {
 export async function deleteContact(contactId: number): Promise<Message> {
     if(!confirm($_('contacts.confirm_delete'))) {
         return {
-            text: 'contacts.delete_cancelled',
+            message: 'contacts.delete_cancelled',
             type: 'error'
         };
     }
@@ -48,7 +47,7 @@ export async function deleteContact(contactId: number): Promise<Message> {
 
         if(contactRes.ok && photoRes.ok) {
             return {
-                text: 'api.contacts.delete.success',
+                message: 'api.contacts.delete.success',
                 type: 'success'
             };
         }
@@ -56,7 +55,7 @@ export async function deleteContact(contactId: number): Promise<Message> {
     }
     catch (error) {
         return {
-            text: 'api.contacts.delete.failed',
+            message: 'api.contacts.delete.failed',
             type: 'error'
         };
     }

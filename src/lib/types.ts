@@ -30,7 +30,7 @@ type ContactWithPhones = {
 };
 
 type Message = {
-    text: string;
+    message: string;
     type: 'success' | 'warning' | 'error';
 };
 
