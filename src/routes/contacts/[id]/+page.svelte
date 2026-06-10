@@ -41,9 +41,9 @@
         
         <div class="card bg-white border-0 shadow-sm rounded-4 overflow-hidden">
             <div class="profile-banner bg-light border-bottom p-4">
-                <div class="d-flex flex-column flex-sm-row align-items-center gap-4 text-center text-sm-start position-relative">
+                <div class="d-flex flex-column flex-md-row align-items-center gap-4 text-center text-sm-start position-relative">
                     
-                    <div class="avatar-wrapper">
+                    <div>
                         {#if contact.photo_url}
                             <img 
                                 src={`/api/v1/photos/thumb_${contact.photo_url}`}
