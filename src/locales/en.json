@@ -105,6 +105,8 @@
         "search": "Search contacts...",
         "no_results": "No contacts found matching your search.",
         "no_contacts": "No contacts. Start adding some!",
+        "no_phone_numbers": "No phone numbers saved.",
+        "no_notes": "No notes for this contact.",
         "phone_number": "Phone number",
         "label": {
             "no_label": "No label",

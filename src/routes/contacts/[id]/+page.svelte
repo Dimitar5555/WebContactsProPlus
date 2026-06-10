@@ -14,13 +14,13 @@
     async function handleDelete(contactId: number) {
         const result = await deleteContact(contactId);
         if(result.type === 'success') {
-            toastStore.add(result.text, 'success');
+            toastStore.add(result.message, 'success');
             setTimeout(() => {
                 window.location.href = '/contacts';
             }, 3000);
         }
         else {
-            toastStore.add(result.text, 'error');
+            toastStore.add(result.message, 'error');
         }
     }
 
@@ -90,11 +90,13 @@
                         <h5 class="text-secondary uppercase-tracking mb-3">
                             <i class="bi bi-telephone me-2 text-primary"></i>{$_('contacts.phone_numbers') || 'Phone Numbers'}
                         </h5>
-                        {#if data.phone_numbers && data.phone_numbers.length > 0}
+                        {#if data.contact.phone_numbers && data.contact.phone_numbers.length > 0}
                             <ul class="list-group list-group-flush border rounded-3 overflow-hidden">
-                                {#each data.phone_numbers as phone}
+                                {#each data.contact.phone_numbers as phone}
                                     <li class="list-group-item d-flex justify-content-between align-items-center p-2">
-                                        <span class="font-monospace fw-medium text-dark">{phone.phone_number}</span>
+                                        <a href={`tel:${phone.phone_number}`} class="text-decoration-none">
+                                            {phone.phone_number}
+                                        </a>
                                         {#if phone.label}
                                             <span class="badge text-bg-primary">
                                                 {$_(`contacts.label.${phone.label.toLowerCase()}`)}
@@ -104,7 +106,7 @@
                                 {/each}
                             </ul>
                         {:else}
-                            <p class="text-muted italic small">No phone numbers saved.</p>
+                            <p class="text-muted italic small">{$_('contacts.no_phone_numbers')}</p>
                         {/if}
                     </div>
 
