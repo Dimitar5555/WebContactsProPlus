@@ -52,13 +52,17 @@ async function persistFile(blob: Blob): Promise<string> {
 
     const buffer = Buffer.from(await blob.arrayBuffer());
 
-    // Resize main image to max 1024px (preserve aspect), strip metadata (EXIF)
+    // Resize main image to max 1024px (preserve aspect), strip metadata (EXIF).
+    // sharp drops all metadata by default unless keepMetadata()/withMetadata()
+    // is called; we deliberately do neither so EXIF (incl. GPS) is removed.
+    // Note: in sharp >= 0.33 `withMetadata({})` is an alias for keepMetadata()
+    // and KEEPS the metadata — do not add it back as a "belt and braces" call.
     await sharp(buffer)
         .rotate()
         .resize({ width: 1024, height: 1024, fit: 'inside' })
         .toFile(dest);
 
-    // Create thumbnail (cover crop)
+    // Create thumbnail (cover crop). Same default-strip behaviour applies.
     await sharp(buffer)
         .rotate()
         .resize(200, 200, { fit: 'cover' })

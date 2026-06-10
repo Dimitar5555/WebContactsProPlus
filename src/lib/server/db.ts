@@ -32,6 +32,13 @@ db.exec(`
         CHECK(label IN ('HOME', 'WORK', 'MOBILE') OR label IS NULL)
     );
 
+    CREATE TABLE IF NOT EXISTS refresh_tokens (
+        token TEXT PRIMARY KEY,
+        user_id INTEGER NOT NULL,
+        expires_at INTEGER NOT NULL,
+        FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+    );
+
     CREATE TABLE IF NOT EXISTS tags (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id INTEGER NOT NULL,

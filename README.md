@@ -58,6 +58,14 @@ npm run test
 npm run dev
 ```
 
+### Running locally without Docker
+
+1. `npm ci`
+2. `cp .env.example .env` (already in repo) and set `JWT_SECRET` to any random string.
+3. `npm run dev` — open http://localhost:5173.
+
+The SQLite database (`./app.db`) and uploaded photos (`./photos/`) live next to the project; both are gitignored. The first run seeds two demo users (`user1`/`password1`, `user2`/`password2`) and six contacts.
+
 ## Deploy with Docker Compose
 
 Production deployment behind nginx with Let's Encrypt TLS (HTTP-01 challenge).
