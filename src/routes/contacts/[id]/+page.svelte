@@ -67,7 +67,7 @@
                     </div>
 
                     <div class="flex-grow-1 mt-2 mt-sm-0">
-                        <div class="d-flex align-items-center justify-content-center justify-content-sm-start gap-2 mb-1">
+                        <div class="d-flex align-items-center justify-content-center justify-content-sm-start gap-2 mb-1 flex-column flex-md-row">
                             <h2 class="m-0 fw-bold text-dark">{contact.first_name} {contact.last_name}</h2>
                             {#if contact.is_favourite}
                                 <span class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill px-2 py-1">
@@ -75,7 +75,6 @@
                                 </span>
                             {/if}
                         </div>
-                        <p class="text-muted small m-0">ID: #{contact.id}</p>
                     </div>
 
                     <div class="align-self-sm-end btn-group">
