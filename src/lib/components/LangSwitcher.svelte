@@ -2,7 +2,6 @@
     import { deserialize } from '$app/forms';
     import { invalidateAll } from '$app/navigation';
     import { locale, _ } from 'svelte-i18n';
-    import { page } from '$app/stores';
 
     let isChangingLang = $state(false);
 
