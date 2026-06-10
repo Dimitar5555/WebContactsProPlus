@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { createContact, uploadContactPhoto, validateContactForm } from '$lib/api/contacts';
     import ContactForm from '$lib/components/ContactForm.svelte';
     import InternalNavigation from '$lib/components/InternalNavigation.svelte';
     import ToastPanel from '$lib/components/ToastPanel.svelte';
@@ -7,46 +8,37 @@
 
     const toastStore = new ToastStore();
     let dataState = $state({
-        contact: {
-            first_name: '',
-            last_name: '',
-            notes: ''
-        },
-        phone_numbers: [{id: null, phone_number: '', label: null}]
-    });
+        first_name: '',
+        last_name: '',
+        notes: '',
+        phone_numbers: [{phone_number: '', label: null}]
+    } as CreateContactPayload);
     let photo_file = $state(null);
     let remove_photo = $state(false);
 
     async function handleSubmit(event: Event) {
         event.preventDefault();
-        const all_data = {
-            ...dataState.contact,
-            phone_numbers: dataState.phone_numbers.filter(p => p.phone_number.trim() !== '')
+        const validation = await validateContactForm(dataState);
+        if(validation.type === 'error') {
+            toastStore.add(validation.message, 'error');
+            return;
         }
         try {
-            const contactsRes = await fetch('/api/v1/contacts', {
-                method: 'POST',
-                body: JSON.stringify(all_data)
-            });
-            const contactsData = await contactsRes.json();
-            if(!contactsRes.ok) {
-                toastStore.add(contactsData.message, 'error');
+            const createResult = await createContact(dataState);
+            if(createResult.message.type === 'error' || !createResult.contactId) {
+                toastStore.add(createResult.message.message, 'error');
                 return;
             }
             if(photo_file) {
-                const photoRes = await fetch(`/api/v1/contacts/${contactsData.contactId}/photo`, {
-                    method: 'POST',
-                    body: photo_file
-                });
-                const photoData = await photoRes.json();
-                if(!photoRes.ok) {
-                    toastStore.add(photoData.message, 'error');
+                const photoResult = await uploadContactPhoto(createResult.contactId, photo_file);
+                if(photoResult.type === 'error') {
+                    toastStore.add(photoResult.message, 'error');
                     return;
                 }
             }
-            toastStore.add(contactsData.message, 'success');
+            toastStore.add(createResult.message.message, 'success');
             setTimeout(() => {
-                window.location.href = `/contacts/${contactsData.contactId}`;
+                window.location.href = `/contacts/${createResult.contactId}`;
             }, 1000);
         }
         catch(err) {

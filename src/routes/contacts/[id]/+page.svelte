@@ -37,7 +37,7 @@
             <p class="m-0 fw-semibold">{$_('contacts.not_found')}</p>
         </div>
     {:else}
-        {@const contact = data.contact}
+        {@const contact: ContactWithPhones = data.contact}
         
         <div class="card bg-white border-0 shadow-sm rounded-4 overflow-hidden">
             <div class="profile-banner bg-light border-bottom p-4">

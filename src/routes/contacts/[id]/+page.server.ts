@@ -5,7 +5,7 @@ import { DomainError } from '$lib/server/errors';
 export const load: PageServerLoad = async ({
     locals,
     params
-}): Promise<{ contact: Contact; phone_numbers: PhoneNumber[] } | Record<string, never>> => {
+}): Promise<{ contact: ContactWithPhones } | Record<string, never>> => {
     if(!locals.user) {
         return {};
     }
@@ -14,7 +14,7 @@ export const load: PageServerLoad = async ({
         return {};
     }
     try {
-        return await contactService.getOwnedWithPhones(contactId, locals.user.id);
+        return { contact: await contactService.getOwnedWithPhones(contactId, locals.user.id) };
     }
     catch (e) {
         if(e instanceof DomainError) {

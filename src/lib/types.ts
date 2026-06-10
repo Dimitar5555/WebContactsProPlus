@@ -24,9 +24,12 @@ type PhoneNumber = {
     label?: phoneNumberLabel;
 };
 
-type ContactWithPhones = {
-    contact: Contact;
-    phones: PhoneNumber[];
+type ContactWithPhones = Contact & {
+    phone_numbers: PhoneNumber[];
+};
+
+type CreateContactPayload = Omit<ContactWithPhones, 'id' | 'user_id' | 'is_favourite'> & {
+    phone_numbers: Omit<PhoneNumber, 'id' | 'contact_id'>[];
 };
 
 type Message = {

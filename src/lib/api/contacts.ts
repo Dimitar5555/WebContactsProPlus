@@ -20,6 +20,7 @@ export async function toggleFavourite(contactId: number): Promise<Message> {
         }
         else {
             return {
+                message: data.message,
                 type: 'error'
             };
         }
@@ -59,4 +60,83 @@ export async function deleteContact(contactId: number): Promise<Message> {
             type: 'error'
         };
     }
+}
+
+export async function validateContactForm(data: CreateContactPayload): Promise<Message> {
+    if(data.first_name.trim() === '' && data.last_name.trim() === '') {
+        return {
+            message: 'contacts.errors.name_required',
+            type: 'error'
+        };
+    }
+    if(data.phone_numbers.some((pn) => pn.phone_number.trim() === '')) {
+        return {
+            message: 'contacts.errors.phone_number_required',
+            type: 'error'
+        };
+    }
+    return {
+        message: '',
+        type: 'success'
+    };
+}
+
+export async function uploadContactPhoto(contactId: number, file: File): Promise<Message> {
+    const photoRes = await fetch(`/api/v1/contacts/${contactId}/photo`, {
+        method: 'POST',
+        body: file
+    });
+    const data = await photoRes.json();
+    return {
+        message: data.message,
+        type: photoRes.ok ? 'success' : 'error'
+    };
+}
+
+export async function updateContact(contact: ContactWithPhones): Promise<Message> {
+    const response = await fetch(`/api/v1/contacts/${contact.id}`, {
+        method: 'PUT',
+        body: JSON.stringify(contact)
+    });
+    const resData = await response.json();
+    return {
+        message: resData.message,
+        type: response.ok ? 'success' : 'error'
+    };
+}
+
+export async function createContact(data: CreateContactPayload): Promise<{message: Message, contactId?: number}> {
+    const response = await fetch('/api/v1/contacts', {
+        method: 'POST',
+        body: JSON.stringify(data)
+    });
+    const resData = await response.json();
+    if(response.ok) {
+        return {
+            message: {
+                message: resData.message,
+                type: 'success'
+            },
+            contactId: resData.contactId
+        };
+    }
+    else {
+        return {
+            message: {
+                message: resData.message,
+                type: 'error'
+            }
+        }
+    }
+}
+
+export async function removeContactPhoto(contactId: number): Promise<Message> {
+    const response = await fetch(`/api/v1/contacts/${contactId}/photo`, {
+        method: 'DELETE'
+    });
+    const resData = await response.json();
+    return {
+        message: resData.message,
+        type: response.ok ? 'success' : 'error'
+    };
 }

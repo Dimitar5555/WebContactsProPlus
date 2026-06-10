@@ -72,13 +72,13 @@ export const contactService = {
         return getOwnedContact(contactId, userId);
     },
 
-    getOwnedWithPhones: async (contactId: number, userId: number): Promise<{ contact: Contact; phone_numbers: PhoneNumber[] }> => {
+    getOwnedWithPhones: async (contactId: number, userId: number): Promise<ContactWithPhones> => {
         const contact = await getOwnedContact(contactId, userId);
         const phone_numbers = await phoneNumberRepository.findByContactId(contactId);
-        return { contact, phone_numbers };
+        return { ...contact, phone_numbers };
     },
 
-    create: async (userId: number, input: ContactInput): Promise<number> => {
+    create: async (userId: number, input: CreateContactPayload): Promise<number> => {
         const { first_name, last_name, notes, phone_numbers = [] } = input;
         if(!first_name || !last_name) {
             throw new ValidationError('api.contacts.missing_fields');
