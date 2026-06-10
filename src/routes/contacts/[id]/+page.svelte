@@ -9,6 +9,7 @@
     import BackButton from '$lib/components/BackButton.svelte';
     import ToastPanel from '$lib/components/ToastPanel.svelte';
     import { ToastStore } from '$lib/state/toasts.svelte';
+    import parsePhoneNumber from 'libphonenumber-js';
 
     const toastStore = new ToastStore();
     async function handleDelete(contactId: number) {
@@ -22,6 +23,14 @@
         else {
             toastStore.add(result.message, 'error');
         }
+    }
+
+    function getFlagEmoji(countryCode: string): string {
+        if (!countryCode || countryCode.length !== 2) return '';
+        
+        return countryCode
+            .toUpperCase()
+            .replace(/./g, (char) => String.fromCodePoint(char.charCodeAt(0) + 127397));
     }
 
     let { data }: PageProps = $props();
@@ -93,9 +102,11 @@
                         {#if data.contact.phone_numbers && data.contact.phone_numbers.length > 0}
                             <ul class="list-group list-group-flush border rounded-3 overflow-hidden">
                                 {#each data.contact.phone_numbers as phone}
+                                    {@const parsedNumber = parsePhoneNumber(phone.phone_number)}
                                     <li class="list-group-item d-flex justify-content-between align-items-center p-2">
-                                        <a href={`tel:${phone.phone_number}`} class="text-decoration-none">
-                                            {phone.phone_number}
+                                        <a href={parsedNumber?.getURI()} class="text-decoration-none">
+                                            {parsedNumber ? parsedNumber.formatInternational() : phone.phone_number}
+                                            {parsedNumber?.country ? getFlagEmoji(parsedNumber.country) : ''}
                                         </a>
                                         {#if phone.label}
                                             <span class="badge text-bg-primary">
