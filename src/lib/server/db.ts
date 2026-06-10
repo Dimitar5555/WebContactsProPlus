@@ -42,22 +42,19 @@ if(userCount.count === 0) {
     insertUser.run('user2', hashedPassword2, 'user2@example.com');
 
     const insertContact = db.prepare('INSERT INTO contacts (user_id, first_name, last_name, is_favourite, notes) VALUES (?, ?, ?, ?, ?)');
-    insertContact.run(1, 'Иван', 'Петров', 1, null);
-    insertContact.run(1, 'Мария', 'Георгиева', 1, 'Нуждае се от специално внимание при избора на подарък');
-    insertContact.run(1, 'Георги', 'Тричков', 1, null);
-    insertContact.run(1, 'Анна', 'Димитрова', 0, null);
-    insertContact.run(1, 'Петър', 'Иванов', 0, null);
-    insertContact.run(1, 'Петрана', 'Петрова', 0, null);
-    insertContact.run(2, 'Петър', 'Иванов', 0, null);
+    insertContact.run(1, 'Иван', 'Петров', 1, 'Нуждае се от специално внимание при избора на подарък');
+    insertContact.run(1, 'Мария', 'Георгиева', 0, null);
+    insertContact.run(1, 'Георги', 'Тричков', 0, null);
+    insertContact.run(2, 'Петър', 'Иванов', 1, null);
 
     const insertPhone = db.prepare('INSERT INTO phone_numbers (contact_id, phone_number, label) VALUES (?, ?, ?)');
-    insertPhone.run(1, '+359123456789', null);
-    insertPhone.run(1, '+359234567890', 'WORK');
-    insertPhone.run(1, '+359345678901', 'MOBILE');
-    insertPhone.run(2, '+359456789012', null);
-    insertPhone.run(3, '+359567890123', 'HOME');
-    insertPhone.run(4, '+359678901234', null);
-    insertPhone.run(5, '+359789012345', 'MOBILE');
-    insertPhone.run(6, '+359890123456', null);
-    insertPhone.run(7, '+359901234567', 'WORK');
+    insertPhone.run(1, '+35923456789', 'HOME');
+    insertPhone.run(1, '+359878787878', 'WORK');
+    insertPhone.run(1, '+13456789032', 'MOBILE');
+    insertPhone.run(1, '+34952563211', null);
+    insertPhone.run(1, '+36542522365', 'HOME');
+    insertPhone.run(2, '+359678901234', null);
+    insertPhone.run(3, '+359789012345', 'MOBILE');
+    insertPhone.run(4, '+359890123456', null);
+    insertPhone.run(4, '+359901234567', 'WORK');
 }
