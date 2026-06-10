@@ -47,6 +47,6 @@ test('i18n locales', () => {
                 diffrence
             );
         }
-        expect(diffrence.size).toBe(0);
+        expect(diffrence).toStrictEqual(new Set<string>());
     }
 });

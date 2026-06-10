@@ -1,9 +1,9 @@
 <script lang="ts">
     import { _ } from 'svelte-i18n';
-    import type { ToastStore } from '$lib/state/toasts.svelte.ts';
+    import type { ToastStore } from '$lib/state/toasts.svelte';
 
     let { data }: { data: ToastStore } = $props();
-    function removeToast(event: MouseEvent, id: number) {
+    function removeToast(event: MouseEvent | null, id: number) {
         if(event) {
             event.preventDefault();
         }

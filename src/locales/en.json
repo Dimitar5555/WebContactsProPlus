@@ -24,13 +24,23 @@
             "delete_success": "Photo deleted successfully"
         },
         "contacts": {
-            "missing_fields": "Missing required fields",
-            "success_update": "Contact updated successfully",
-            "success_delete": "Contact deleted successfully",
+            "update": {
+                "success": "Contact updated successfully",
+                "failed": "Failed to update contact"
+            },
+            "delete": {
+                "success": "Contact deleted successfully",
+                "failed": "Failed to delete contact"
+            },
+            "create": {
+                "success": "Contact created successfully",
+                "failed": "Failed to create contact"
+            },
             "favourite": {
                 "added": "Contact added to favourites",
                 "removed": "Contact removed from favourites"
-            }
+            },
+            "missing_fields": "Missing required fields"
         }
     },
     "navigation": {
@@ -42,7 +52,7 @@
         "logout": "Logout"
     },
     "home": {
-        "title": "Welcome to WebChatProPlus!",
+        "title": "Welcome to WebContactsProPlus!",
         "lead": "The secure way to manage your contacts and stay connected.",
         "feature_security": "Security",
         "feature_security_description": "Your data is protected and encrypted.",
@@ -72,11 +82,8 @@
     },
     "contacts": {
         "add": "Add Contact",
-        "my_contacts": "My Contacts",
-        "edit": {
-            "success_update": "Contact updated successfully",
-            "failed_update": "Failed to update contact"
-        },
+        "all_contacts": "All Contacts",
+        "favourite_contacts": "Favourite Contacts",
         "actions": {
             "view": "View",
             "edit": "Edit",
@@ -108,9 +115,8 @@
         "remove_photo": "Remove photo",
         "remove_phone": "Remove phone number",
         "first_name": "First name",
-        "last_name": "Last name"
-    },
-    "favourite_contacts": {
-        "title": "Favourite Contacts"
+        "last_name": "Last name",
+        "phone_numbers": "Phone numbers",
+        "add_phone": "Add phone number"
     }
 }

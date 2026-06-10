@@ -1,6 +1,7 @@
 <script lang="ts">
+    import "$lib/assets/contacts.css";
     import { _ } from "svelte-i18n";
-    import { ContactStore } from "$lib/state/contacts.svelte.ts";
+    import { ContactStore } from "$lib/state/contacts.svelte";
 
     let { store }: { store: ContactStore } = $props();
     let searchQuery: string = $state('');
@@ -58,8 +59,8 @@
     }
     function rightClickContextMenu(e: MouseEvent) {
         e.preventDefault();
-        currentContactId = parseInt((e.currentTarget as HTMLAnchorElement).dataset.contactId)
-        showMenu = true
+        currentContactId = parseInt((e.currentTarget as HTMLAnchorElement).dataset.contactId!);
+        showMenu = true;
         browser = {
             w: window.innerWidth,
             h: window.innerHeight
@@ -97,77 +98,6 @@
     }
 </script>
 
-<style>
-    .contact-item {
-        padding: 8px;
-        border-bottom: 1px solid #ccc;
-        cursor: pointer;
-    }
-    .contact-item {
-        text-decoration: none;
-        color: #333;
-    }
-    .contact-item:hover {
-        background-color: #958b8b;
-    }
-    /* right click menu */
-
-    .right-click-menu{
-        display: inline-flex;
-        border: 1px #999 solid;
-        width: 215px;
-        background-color: #fff;
-        border-radius: 10px;
-        overflow: hidden;
-        flex-direction: column;
-    }
-    .right-click-menu ul{
-        margin: 6px;
-        padding-left: 0px;
-    }
-
-    .right-click-menu ul li{
-        display: block;
-        list-style-type: none;
-        width: 1fr;
-    }
-    .right-click-menu ul li button{
-        font-size: 1rem;
-        color: #222;
-        width: 100%;
-        height: 30px;
-        text-align: left;
-        border: 0px;
-        background-color: #fff;
-    }
-    .right-click-menu ul li button:hover{
-        color: #000;
-        text-align: left;
-        border-radius: 5px;
-        background-color: #eee;
-    }
-    .right-click-menu ul li button i{
-        padding: 0px 15px 0px 10px;
-    }
-    .right-click-menu ul li button i.fa-square{
-        color: #fff;
-    }
-    .right-click-menu ul li button:hover > i.fa-square{
-        color: #eee;
-    }
-    .right-click-menu ul li button:hover > i.warning{
-        color: crimson;
-    }
-    :global(.right-click-menu ul li button.info:hover){
-        color: navy;
-    }
-    hr{
-        border: none;
-        border-bottom: 1px solid #ccc;
-        margin: 5px 0px;
-    }
-</style>
-
 {#if showMenu}
 <nav use:getContextMenuDimension style="position: absolute; top:{pos.y}px; left:{pos.x}px">
     <div class="right-click-menu">
@@ -177,10 +107,10 @@
                     <hr>
                 {:else}
                 <li>
-                    <button onclick={item.onClick}>
+                    <button onclick={item.onClick} data-name={item.name}>
                         <i class={item.class}></i>
                         {#if item.displayTextFunction}
-                            {item.displayTextFunction(store.contacts.find(c => c.id === currentContactId))}
+                            {item.displayTextFunction(store.contacts.find(c => c.id === currentContactId)!)}
                         {:else if item.displayText}
                             {item.displayText}
                         {/if}
@@ -203,7 +133,16 @@
                 oncontextmenu={rightClickContextMenu}    
                 data-contact-id={contact.id}
             >
-                {contact.first_name} {contact.last_name}
+                <span>
+                    {#if contact.photo_url}
+                        <img src={'/api/v1/photos/thumb_' + contact.photo_url} alt="Profile Picture" class="rounded-circle me-2 contact-photo-thumb" />
+                    {:else}
+                        <div class="rounded-circle me-2 d-inline-block text-center align-middle contact-photo-thumb contact-photo-placeholder">
+                            <i class="bi bi-person-fill"></i>
+                        </div>
+                    {/if}
+                    {contact.first_name} {contact.last_name}
+                </span>
                 <span>
                     {#if contact.is_favourite}
                     <i class="bi bi-heart-fill"></i>

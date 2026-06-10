@@ -1,12 +1,8 @@
 import type { PageServerLoad } from './$types';
-import { database } from '$lib/database';
+import { contactService } from '$lib/server/services/contact.service';
 
-export const load: PageServerLoad = async ({
-    locals
-}: any): Promise<{ contacts: Contact[] }> => {
-    const contacts = await database.contacts.findMany({
-        userId: (locals.user as any).id
-    });
-
+export const load: PageServerLoad = async ({ locals, url }: { locals: any; url: URL }): Promise<{ contacts: Contact[] }> => {
+    const showOnlyFavourites = url.searchParams.get('filter') === 'favourites';
+    const contacts = await contactService.listForUser(locals.user.id, { favouritesOnly: showOnlyFavourites });
     return { contacts };
 };

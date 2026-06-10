@@ -38,17 +38,17 @@
         try {
             if(contactsRes.ok && secondaryRes) {
                 const contactsData = await contactsRes.json();
-                toastStore.add('contacts.edit.success_update', 'success');
+                toastStore.add('api.contacts.contacts.update.success', 'success');
                 setTimeout(() => {
                     window.location.href = `/contacts/${dataState.contact.id}`;
                 }, 1000);
             }
             else {
-                toastStore.add('contacts.edit.failed_update', 'error');
+                toastStore.add('api.contacts.contacts.update.failed', 'error');
             }
         }
         catch(err) {
-            toastStore.add('contacts.edit.failed_update', 'error');
+            toastStore.add('api.contacts.contacts.update.failed', 'error');
         }
     }
 </script>

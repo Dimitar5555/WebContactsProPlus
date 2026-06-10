@@ -21,7 +21,7 @@
                     <a class="nav-link" href="/contacts">{$_('navigation.contacts')}</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/favourite-contacts">{$_('navigation.favourite_contacts')}</a>
+                    <a class="nav-link" href="/contacts?filter=favourites">{$_('navigation.favourite_contacts')}</a>
                 </li>
             </ul>
             <ul class="navbar-nav ms-auto">

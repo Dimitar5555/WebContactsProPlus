@@ -14,7 +14,7 @@ This is a group project for the Web Technologies course at Faculty of Mathematic
 ## Architecture
 
 - Frontend: SvelteKit + Bootstrap
-- Backend: Node.js with Express
+- Backend: SvelteKit API routes
 - Database: SQLite
 - Authentication: JWT (JSON Web Tokens)
 - Testing: Vitest
@@ -57,3 +57,53 @@ npm run test
 ```sh
 npm run dev
 ```
+
+## Deploy with Docker Compose
+
+Production deployment behind nginx with Let's Encrypt TLS (HTTP-01 challenge).
+
+### Prerequisites
+
+- A host with Docker + Docker Compose v2 installed.
+- Ports **80** and **443** open to the public internet.
+- A domain whose **A** (and optionally **AAAA**) DNS record points to the host's public IP. The record must be propagated before running the bootstrap, otherwise the ACME HTTP-01 challenge will fail.
+
+### Steps
+
+1. Copy the env template and fill in your values:
+
+   ```sh
+   cp .env.example .env
+   # edit .env: set JWT_SECRET (long random string), DOMAIN, LETSENCRYPT_EMAIL
+   ```
+
+2. Bring the stack up:
+
+   ```sh
+   docker compose up -d
+   ```
+
+3. Wait ~30 seconds. nginx starts immediately with a self-signed placeholder cert, then certbot issues the real Let's Encrypt cert and nginx reloads automatically.
+
+4. Open `https://<your-domain>` and use the **Register** page to create the first account — the seed users (`user1`/`user2`) are gated to dev only and are not created in the production image.
+
+> If DNS isn't yet pointing at the host when you run `up`, the certbot container will fail and restart in a loop — it'll succeed automatically once DNS resolves. While waiting, nginx serves the self-signed placeholder (browsers will warn about the untrusted cert; this is expected).
+
+### What's running
+
+| Service | Image | Purpose |
+| --- | --- | --- |
+| `app` | local build | SvelteKit (`adapter-node`) on internal port 3000. SQLite + uploaded photos persist in the `app-data` volume. |
+| `nginx` | `nginx:1.27-alpine` | Terminates TLS on 443, redirects 80 → 443, proxies to `app`. |
+| `certbot` | `certbot/certbot` | Renews the Let's Encrypt cert every 12h. |
+
+### Data persistence
+
+Three named volumes survive `docker compose down`:
+
+- `app-data` — `app.db` and `photos/`
+- `letsencrypt-certs` — `/etc/letsencrypt`
+- `letsencrypt-www` — webroot for the ACME challenge
+
+`docker compose down -v` wipes them — including users and certs.
+

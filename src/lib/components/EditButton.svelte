@@ -7,7 +7,7 @@
 
 <Button
     type="primary"
-    outline={false}
+    outline={true}
     size=""
     string="contacts.actions.edit"
     onClick={() => window.location.href = `/contacts/${contactId}/edit`}

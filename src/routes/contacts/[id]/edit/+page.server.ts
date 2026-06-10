@@ -1,21 +1,25 @@
 import type { PageServerLoad } from './$types';
-import { database } from '$lib/database';
+import { contactService } from '$lib/server/services/contact.service';
+import { DomainError } from '$lib/server/errors';
 
 export const load: PageServerLoad = async ({
     locals,
     params
-}: any): Promise<{ contact: Contact; phone_numbers: PhoneNumber[] }> => {
-    const contact_id = parseInt(params.id);
-    const contact = await database.contacts.findById(
-        contact_id,
-        (locals.user as any).id
-    );
-    if(!contact) {
-        return {} as any;
+}: any): Promise<{ contact: Contact; phone_numbers: PhoneNumber[] } | Record<string, never>> => {
+    if(!locals.user) {
+        return {};
     }
-
-    const phone_numbers: PhoneNumber[] =
-        (await database.phoneNumbers.findByContactId(contact_id)) as any;
-
-    return { contact, phone_numbers };
+    const contactId = parseInt(params.id);
+    if(isNaN(contactId)) {
+        return {};
+    }
+    try {
+        return await contactService.getOwnedWithPhones(contactId, locals.user.id);
+    }
+    catch (e) {
+        if(e instanceof DomainError) {
+            return {};
+        }
+        throw e;
+    }
 };
