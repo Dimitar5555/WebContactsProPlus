@@ -46,7 +46,6 @@ async function persistFile(blob: Blob): Promise<string> {
     ensureUploadDir();
     const ext = MIME_TO_EXT[blob.type];
     
-    // Fallback protection if MIME type mapping fails
     if (!ext) {
         throw new ValidationError('api.photo.unsupported_format');
     }
@@ -64,15 +63,12 @@ async function persistFile(blob: Blob): Promise<string> {
         throw new ValidationError('api.photo.corrupt_file');
     }
 
-    // Wrap image processing in a try/catch block
     try {
-        // 1. Process Main Image
         await sharp(buffer)
             .rotate() // Handles auto-rotation from EXIF orientation
             .resize({ width: 1024, height: 1024, fit: 'inside' })
             .toFile(dest);
 
-        // 2. Process Thumbnail
         await sharp(buffer)
             .rotate()
             .resize(200, 200, { fit: 'cover' })
@@ -84,8 +80,7 @@ async function persistFile(blob: Blob): Promise<string> {
         // Clean up files if one succeeded but the other failed
         await removePhotoFiles(name);
         
-        // Throw a 400 validation error instead of crashing with a 500
-        throw new ValidationError('api.photo.processing_failed' + JSON.stringify(sharpError));
+        throw new ValidationError('api.photo.processing_failed');
     }
 
     return name;
