@@ -44,29 +44,49 @@ function ensureUploadDir(): void {
 
 async function persistFile(blob: Blob): Promise<string> {
     ensureUploadDir();
-    const ext = MIME_TO_EXT[blob.type] ?? 'bin';
+    const ext = MIME_TO_EXT[blob.type];
+    
+    // Fallback protection if MIME type mapping fails
+    if (!ext) {
+        throw new ValidationError('api.photo.unsupported_format');
+    }
+    
     const id = uuidv4();
     const name = `${id}.${ext}`;
     const dest = path.join(uploadDir, name);
     const thumbDest = path.join(uploadDir, `thumb_${name}`);
 
-    const buffer = Buffer.from(await blob.arrayBuffer());
+    let buffer: Buffer;
+    try {
+        buffer = Buffer.from(await blob.arrayBuffer());
+    } catch (err) {
+        console.error('Failed to read blob arrayBuffer:', err);
+        throw new ValidationError('api.photo.corrupt_file');
+    }
 
-    // Resize main image to max 1024px (preserve aspect), strip metadata (EXIF).
-    // sharp drops all metadata by default unless keepMetadata()/withMetadata()
-    // is called; we deliberately do neither so EXIF (incl. GPS) is removed.
-    // Note: in sharp >= 0.33 `withMetadata({})` is an alias for keepMetadata()
-    // and KEEPS the metadata — do not add it back as a "belt and braces" call.
-    await sharp(buffer)
-        .rotate()
-        .resize({ width: 1024, height: 1024, fit: 'inside' })
-        .toFile(dest);
+    // Wrap image processing in a try/catch block
+    try {
+        // 1. Process Main Image
+        await sharp(buffer)
+            .rotate() // Handles auto-rotation from EXIF orientation
+            .resize({ width: 1024, height: 1024, fit: 'inside' })
+            .toFile(dest);
 
-    // Create thumbnail (cover crop). Same default-strip behaviour applies.
-    await sharp(buffer)
-        .rotate()
-        .resize(200, 200, { fit: 'cover' })
-        .toFile(thumbDest);
+        // 2. Process Thumbnail
+        await sharp(buffer)
+            .rotate()
+            .resize(200, 200, { fit: 'cover' })
+            .toFile(thumbDest);
+            
+    } catch (sharpError: any) {
+        console.error('Sharp processing failed:', sharpError);
+        
+        // Clean up files if one succeeded but the other failed
+        await removePhotoFiles(name);
+        
+        // Throw a 400 validation error instead of crashing with a 500
+        throw new ValidationError('api.photo.processing_failed' + JSON.stringify(sharpError));
+    }
 
     return name;
 }
