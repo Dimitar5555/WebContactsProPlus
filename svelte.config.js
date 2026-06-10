@@ -8,10 +8,13 @@ const config = {
             filename.split(/[/\\]/).includes('node_modules') ? undefined : true
     },
     kit: {
-        adapter: adapter(),
-        // Increase body size limit to allow image uploads larger than the
-        // SvelteKit default (512KB). Match service limit (5MB) with some headroom.
-        bodySizeLimit: '6MB'
+        adapter: adapter({
+            options: {
+                // Increase body size limit to allow image uploads larger than the
+                // SvelteKit default (512KB). Match service limit (5MB) with some headroom.
+                bodySizeLimit: '6MB'
+            }
+        }),
     }
 };
 
