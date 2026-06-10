@@ -1,13 +1,16 @@
 # WebContactsProPlus
 
+Website: https://zhekov.eu
+
 This is a group project for the Web Technologies course at Faculty of Mathematics and Informatics, Sofia University. The project is a contact management application built on top of SvelteKit, with a SQLite database for storing user data, contacts, and tags. The application allows users to create an account, log in, manage their contacts.
 
 ## Features
 
 - User authentication (registration and login)
 - CRUD operations for contacts
-- Search functionality for contacts
+- Search functionality for contacts by name and/or tag
 - Favoriting contacts
+- Add/remove tags to contacts
 - Language switching (English and Bulgarian)
 - Responsive design for mobile and desktop
 
@@ -19,6 +22,7 @@ This is a group project for the Web Technologies course at Faculty of Mathematic
 - Authentication: JWT (JSON Web Tokens)
 - Testing: Vitest
 - Internationalization: [svelte-i18n](https://npmjs.com/package/svelte-i18n)
+- Automatic deployment to VPS server using Docker Compose (nginx + certbot for TLS)
 
 ## Requirements
 
