@@ -18,7 +18,7 @@
 
 <div class="container bg-white p-4 mt-3 rounded shadow">
     <h1>{$_(showOnlyFavourites ? 'contacts.favourite_contacts' : 'contacts.all_contacts')}</h1>
-    <a href="/contacts/new" class="btn btn-primary mb-3">
+    <a href="/contacts/new" class="btn btn-outline-primary mb-3">
         <i class="bi bi-plus-lg"></i>
         {$_('contacts.add')}
     </a>
