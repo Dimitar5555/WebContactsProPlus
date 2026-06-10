@@ -1,5 +1,6 @@
 <script lang="ts">
     import { _ } from 'svelte-i18n';
+    import LangSwitcher from './LangSwitcher.svelte';
 
     async function logout() {
         await fetch('/api/v1/logout', {
@@ -25,8 +26,13 @@
                 </li>
             </ul>
             <ul class="navbar-nav ms-auto">
-                <li class="nav-item" role="button">
-                    <a class="nav-link" onclick={logout}>{$_('navigation.logout')}</a>
+                <li class="nav-item">
+                    <LangSwitcher />
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" onclick={logout}>
+                        {$_('navigation.logout')}
+                    </a>
                 </li>
             </ul>
         </div>

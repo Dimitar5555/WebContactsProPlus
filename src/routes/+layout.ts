@@ -3,13 +3,9 @@ import { defaultLocale } from '$lib/i18n';
 import { locale, waitLocale } from 'svelte-i18n';
 import type { LayoutLoad } from './$types';
 
-export const load: LayoutLoad = async () => {
+export const load: LayoutLoad = async ({ data }) => {
     if(browser) {
-        const lang = window.document.cookie
-            .split('; ')
-            .find(row => row.startsWith('lang='))
-            ?.split('=')[1];
-        locale.set(lang || defaultLocale);
+        locale.set(data.lang || defaultLocale);
     }
     await waitLocale();
 };

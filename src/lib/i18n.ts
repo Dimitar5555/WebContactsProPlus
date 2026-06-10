@@ -6,6 +6,5 @@ register('en', () => import('./../locales/en.json'));
 register('bg', () => import('./../locales/bg.json'));
 
 init({
-    fallbackLocale: defaultLocale,
-    initialLocale: defaultLocale
+    fallbackLocale: defaultLocale
 });
