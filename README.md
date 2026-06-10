@@ -6,9 +6,9 @@ This is a group project for the Web Technologies course at Faculty of Mathematic
 
 - User authentication (registration and login)
 - CRUD operations for contacts
-- Tagging system for contacts
 - Search functionality for contacts
 - Favoriting contacts
+- Language switching (English and Bulgarian)
 - Responsive design for mobile and desktop
 
 ## Architecture
