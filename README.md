@@ -24,6 +24,26 @@ This is a group project for the Web Technologies course at Faculty of Mathematic
 - Internationalization: [svelte-i18n](https://npmjs.com/package/svelte-i18n)
 - Automatic deployment to VPS server using Docker Compose (nginx + certbot for TLS)
 
+```mermaid
+graph TD
+    subgraph Frontend
+        A[SvelteKit] --> B[Bootstrap]
+        A --> C[svelte-i18n]
+    end
+    subgraph Backend
+        D[SvelteKit API Routes] --> E[SQLite Database]
+        D --> F[JWT Authentication]
+    end
+    subgraph Testing
+        G[Vitest] --> D
+    end
+      subgraph Deployment
+        H[Docker Compose] --> I[nginx]
+        H --> J[certbot]
+        I --> D
+    end
+```
+
 ## Requirements
 
 - Node.js (version 22 or later)
