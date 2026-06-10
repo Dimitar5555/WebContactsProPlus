@@ -49,7 +49,8 @@
         "register": "Регистрация",
         "contacts": "Контакти",
         "favourite_contacts": "Любими контакти",
-        "logout": "Изход"
+        "logout": "Изход",
+        "select_language": "Изберете език"
     },
     "home": {
         "title": "Добре дошли в WebContactsProPlus!",
@@ -93,6 +94,11 @@
             "back": "Назад",
             "save": "Запази",
             "create": "Създай контакт"
+        },
+        "errors": {
+            "name_required": "Името е задължително",
+            "phone_number_required": "Телефонният номер е задължителен",
+            "phone_number_invalid": "Невалиден телефонен номер"
         },
         "confirm_delete": "Сигурен ли си, че искаш да изтриеш този контакт?",
         "delete_success": "Контактът беше успешно изтрит",

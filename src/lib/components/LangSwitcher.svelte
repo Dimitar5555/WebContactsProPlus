@@ -55,7 +55,7 @@
     <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-3 mt-2" aria-labelledby="languageDropdown">
         <li>
             <h6 class="dropdown-header small text-uppercase tracking-wider fw-bold text-muted px-3 pt-2 pb-1">
-                {$_('nav.select_language') || 'Select Language'}
+                {$_('navigation.select_language')}
             </h6>
         </li>
         <li>

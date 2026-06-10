@@ -27,7 +27,7 @@ export async function toggleFavourite(contactId: number): Promise<Message> {
     }
     catch (error) {
         return {
-            message: 'api.generic_error',
+            message: 'api.generic.server_error',
             type: 'error'
         };
     }

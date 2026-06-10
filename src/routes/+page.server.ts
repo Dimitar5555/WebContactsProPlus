@@ -6,7 +6,7 @@ export const actions = {
         const locale = formData.get('locale')?.toString();
 
         if (!locale) {
-            return fail(400, { message: 'Locale is required' });
+            return fail(400, { message: 'Missing locale' });
         }
 
         // Save the locale choice to a cookie that expires in 1 year
