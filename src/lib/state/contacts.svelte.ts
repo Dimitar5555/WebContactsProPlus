@@ -30,6 +30,6 @@ export class ContactStore {
                 contact.is_favourite = !contact.is_favourite;
             }
         }
-        this.toastStore.add(message.text, message.type);
+        this.toastStore.add(message.message, message.type);
     }
 }

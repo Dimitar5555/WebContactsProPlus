@@ -135,7 +135,7 @@
             >
                 <span>
                     {#if contact.photo_url}
-                        <img src={'/api/v1/photos/thumb_' + contact.photo_url} alt="Profile Picture" class="rounded-circle me-2 contact-photo-thumb" />
+                        <img src={'/api/v1/photos/thumb_' + contact.photo_url} class="rounded-circle me-2 contact-photo-thumb" />
                     {:else}
                         <div class="rounded-circle me-2 d-inline-block text-center align-middle contact-photo-thumb contact-photo-placeholder">
                             <i class="bi bi-person-fill"></i>
