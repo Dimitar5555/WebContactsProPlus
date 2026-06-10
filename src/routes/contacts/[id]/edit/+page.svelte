@@ -41,14 +41,14 @@
                     return;
                 }
             }
-            toastStore.add('api.contacts.contacts.update.success', 'success');
+            toastStore.add('api.contacts.update.success', 'success');
             setTimeout(() => {
                 window.location.href = `/contacts/${dataState.id}`;
             }, 1000);
         }
         catch(err) {
             console.error('Error updating contact:', err);
-            toastStore.add('api.contacts.contacts.update.failed', 'error');
+            toastStore.add('api.contacts.update.failed', 'error');
             return;
         }
     }

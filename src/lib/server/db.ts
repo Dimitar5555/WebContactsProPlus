@@ -51,13 +51,13 @@ if(userCount.count === 0) {
     insertContact.run(2, 'Петър', 'Иванов', 0, null);
 
     const insertPhone = db.prepare('INSERT INTO phone_numbers (contact_id, phone_number, label) VALUES (?, ?, ?)');
-    insertPhone.run(1, '123-456-7890', null);
-    insertPhone.run(1, '234-567-8901', 'WORK');
-    insertPhone.run(1, '345-678-9012', 'MOBILE');
-    insertPhone.run(2, '456-789-0123', null);
-    insertPhone.run(3, '567-890-1234', 'HOME');
-    insertPhone.run(4, '678-901-2345', null);
-    insertPhone.run(5, '789-012-3456', 'MOBILE');
-    insertPhone.run(6, '890-123-4567', null);
-    insertPhone.run(7, '901-234-5678', 'WORK');
+    insertPhone.run(1, '+359123456789', null);
+    insertPhone.run(1, '+359234567890', 'WORK');
+    insertPhone.run(1, '+359345678901', 'MOBILE');
+    insertPhone.run(2, '+359456789012', null);
+    insertPhone.run(3, '+359567890123', 'HOME');
+    insertPhone.run(4, '+359678901234', null);
+    insertPhone.run(5, '+359789012345', 'MOBILE');
+    insertPhone.run(6, '+359890123456', null);
+    insertPhone.run(7, '+359901234567', 'WORK');
 }

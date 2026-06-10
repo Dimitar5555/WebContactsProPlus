@@ -75,6 +75,13 @@ export async function validateContactForm(data: CreateContactPayload): Promise<M
             type: 'error'
         };
     }
+    const phoneRegex = /^\+\d{3,15}$/;
+    if(data.phone_numbers.some((pn) => !phoneRegex.test(pn.phone_number.trim()))) {
+        return {
+            message: 'contacts.errors.phone_number_invalid',
+            type: 'error'
+        };
+    }
     return {
         message: '',
         type: 'success'

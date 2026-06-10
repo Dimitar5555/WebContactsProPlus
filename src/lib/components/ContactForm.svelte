@@ -96,11 +96,11 @@
                 <label class="form-label fw-semibold text-dark small d-block mb-2">{$_('contacts.phone_numbers')}</label>
                 
                 <div class="d-flex flex-column gap-2 align-items-stretch bg-white p-2 rounded-3 border row-capsule">
-                    {#each contact.phone_numbers as UNSUSED, index}
-                        {@const phoneNumber = contact.phone_numbers[index]}
+                    {#each contact.phone_numbers as phoneNumber, index}
+                        {@const format = '+' + 'X'.repeat(10) + '...' }
                         <div class="d-flex flex-column flex-sm-row gap-2 align-items-stretch bg-light p-2 rounded-3 border">
                             <div class="flex-grow-1">
-                                <input class="form-control border-sm-0 shadow-none fw-medium text-dark" type="text" name="phone_numbers[]" placeholder={`${$_('contacts.phone_number')}} ${index + 1}`} required bind:value={phoneNumber.phone_number} />
+                                <input class="form-control border-sm-0 shadow-none fw-medium text-dark" type="text" name="phone_numbers[]" placeholder={format} title={$_('contacts.phone_number_format_text') + ' ' + format} pattern={"^\+\d{3,15}$"} required bind:value={phoneNumber.phone_number} />
                             </div>
                             <div class="phone-label-select-wrapper">
                                 <select class="form-select border-sm-0 bg-white fw-semibold text-dark shadow-none" name="phone_label[]" bind:value={phoneNumber.label}>

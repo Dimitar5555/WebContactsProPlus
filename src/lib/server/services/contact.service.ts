@@ -16,6 +16,10 @@ type ContactInput = {
     phone_numbers?: PhoneNumberInput[];
 };
 
+function isValidPhoneNumber(phone: string): boolean {
+    return /^\+\d{3,15}$/.test((phone || '').trim());
+}
+
 async function getOwnedContact(contactId: number, userId: number): Promise<Contact> {
     if(isNaN(contactId)) {
         throw new ValidationError('api.generic.invalid_id');
@@ -37,6 +41,9 @@ async function syncPhoneNumbers(contactId: number, incoming: PhoneNumberInput[])
     for(const item of incoming) {
         if(!item.phone_number) {
             continue;
+        }
+        if(!isValidPhoneNumber(item.phone_number)) {
+            throw new ValidationError('api.contacts.invalid_phone_number');
         }
         if(item.id && existingIds.includes(item.id)) {
             await phoneNumberRepository.update(item.id, {
@@ -82,6 +89,12 @@ export const contactService = {
         const { first_name, last_name, notes, phone_numbers = [] } = input;
         if(!first_name || !last_name) {
             throw new ValidationError('api.contacts.missing_fields');
+        }
+
+        for(const item of phone_numbers) {
+            if(item.phone_number && !isValidPhoneNumber(item.phone_number)) {
+                throw new ValidationError('api.contacts.invalid_phone_number');
+            }
         }
 
         const newId = await contactRepository.create({
