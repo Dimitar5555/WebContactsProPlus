@@ -10,9 +10,11 @@ This is a group project for the Web Technologies course at Faculty of Mathematic
 - CRUD operations for contacts
 - Search functionality for contacts by name and/or tag
 - Favoriting contacts
-- Add/remove tags to contacts
+- Toggle tags to contacts
+- Managing tags (create, update, delete)
 - Language switching (English and Bulgarian)
 - Responsive design for mobile and desktop
+- Profile pictures for contacts with server-side image processing (resizing, thumbnail generation)
 
 ## Architecture
 
