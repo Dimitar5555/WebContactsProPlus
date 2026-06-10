@@ -3,7 +3,7 @@ export class ToastStore {
 
     constructor() {}
 
-    add(message: string | null, type: 'success' | 'error' | 'warning', duration = 30000) {
+    add(message: string | null, type: 'success' | 'error' | 'warning', duration = 3000) {
         if(!message) return;
         const id = Date.now();
         const timeoutId = window.setTimeout(() => {
