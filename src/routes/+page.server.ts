@@ -13,7 +13,7 @@ export const actions = {
         cookies.set('lang', locale, {
             path: '/',
             maxAge: 60 * 60 * 24 * 365,
-            httpOnly: true, // Secure against XSS attacks
+            httpOnly: import.meta.env.PROD,
             sameSite: 'lax'
         });
 
