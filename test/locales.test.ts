@@ -8,7 +8,6 @@ test('i18n locales', () => {
             const fullKey = prefix ? `${prefix}.${key}` : key;
             if(typeof obj[key] === 'object' && obj[key] !== null) {
                 const nestedKeys = getKeys(obj[key], fullKey);
-                console.log(`Nested keys for ${fullKey}:`, nestedKeys);
                 for(const nestedKey of nestedKeys) {
                     keys.add(nestedKey);
                 }

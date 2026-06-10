@@ -1,0 +1,150 @@
+.contact-photo-thumb {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.contact-photo-large {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.contact-photo-placeholder {
+    background-color: #007bff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+}
+
+.contact-photo-thumb.contact-photo-placeholder i {
+    color: #fff;
+    font-size: 25px;
+    line-height: 40px;
+    vertical-align: middle;
+}
+
+.contact-photo-large.contact-photo-placeholder i {
+    color: #fff;
+    font-size: 25px;
+    line-height: 40px;
+    vertical-align: middle;
+}
+
+.contact-item {
+    padding: 8px;
+    cursor: pointer;
+}
+
+.contact-item {
+    text-decoration: none;
+    color: #333;
+}
+
+.contact-item:hover {
+    background-color: #f0f0f0;
+}
+
+.tag-chip-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+}
+
+.contact-tag-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.2rem 0.55rem;
+    border-radius: 999px;
+    color: #fff;
+    font-size: 0.75rem;
+    line-height: 1;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+}
+
+.tag-picker-details {
+    position: relative;
+}
+
+.tag-picker-details > summary {
+    list-style: none;
+    cursor: pointer;
+}
+
+.tag-picker-details > summary::-webkit-details-marker {
+    display: none;
+}
+
+.tag-picker-popover {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 0.5rem);
+    z-index: 20;
+    min-width: 16rem;
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 0.75rem;
+    padding: 0.75rem;
+}
+
+/* right click menu */
+.right-click-menu {
+    display: inline-flex;
+    border: 1px #999 solid;
+    width: 215px;
+    background-color: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    flex-direction: column;
+}
+
+.right-click-menu ul {
+    margin: 6px;
+    padding-left: 0px;
+}
+
+.right-click-menu ul li {
+    display: block;
+    list-style-type: none;
+    width: 1fr;
+}
+
+.right-click-menu ul li button {
+    font-size: 1rem;
+    color: #222;
+    width: 100%;
+    height: 30px;
+    text-align: left;
+    border: 0px;
+    background-color: #fff;
+}
+
+.right-click-menu ul li button:hover {
+    color: #000;
+    text-align: left;
+    border-radius: 5px;
+    background-color: #eee;
+}
+
+.right-click-menu ul li button i {
+    padding: 0px 15px 0px 10px;
+}
+
+.right-click-menu ul li button[data-name="trash"]:hover {
+    background-color: crimson;
+    color: #fff;
+}
+
+:global(.right-click-menu ul li button.info:hover) {
+    color: navy;
+}
+
+hr {
+    border: none;
+    border-bottom: 1px solid #ccc;
+    margin: 5px 0px;
+}

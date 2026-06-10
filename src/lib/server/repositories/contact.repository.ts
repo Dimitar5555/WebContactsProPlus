@@ -3,6 +3,7 @@ import { db } from '../db';
 export type ContactQuery = {
     userId: number;
     where?: Partial<Contact>;
+    tagId?: number;
 };
 
 function mapContact(row: any): Contact {
@@ -13,13 +14,18 @@ function mapContact(row: any): Contact {
 }
 
 export const contactRepository = {
-    findMany: async ({ where, userId }: ContactQuery): Promise<Contact[]> => {
+    findMany: async ({ where, userId, tagId }: ContactQuery): Promise<Contact[]> => {
         let query = 'SELECT * FROM contacts WHERE user_id = ?';
         const params: any[] = [userId];
 
         if(where?.is_favourite !== undefined) {
             query += ' AND is_favourite = ?';
             params.push(where.is_favourite ? 1 : 0);
+        }
+
+        if(tagId !== 0) {
+            query += ' AND id IN (SELECT contact_id FROM contact_tags WHERE tag_id = ?)';
+            params.push(tagId);
         }
 
         const rows = db.prepare(query).all(...params);

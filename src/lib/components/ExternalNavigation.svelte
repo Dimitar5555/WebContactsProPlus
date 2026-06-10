@@ -1,5 +1,6 @@
 <script lang="ts">
     import { _ } from 'svelte-i18n';
+    import LangSwitcher from './LangSwitcher.svelte';
 </script>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container">
@@ -17,6 +18,11 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/register">{$_('navigation.register')}</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <LangSwitcher />
                 </li>
             </ul>
         </div>

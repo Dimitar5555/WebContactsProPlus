@@ -1,5 +1,6 @@
 import { sequence } from '@sveltejs/kit/hooks';
 import { redirect, type Handle } from '@sveltejs/kit';
+import { defaultLocale } from '$lib/i18n';
 import { locale } from 'svelte-i18n';
 import { authService } from '$lib/server/services/auth.service';
 
@@ -8,7 +9,9 @@ const first: Handle = async ({ event, resolve }) => {
     if(lang) {
         locale.set(lang);
     }
-    return await resolve(event);
+    return await resolve(event, {
+        transformPageChunk: ({ html }) => html.replace('%lang%', lang || defaultLocale)
+    });
 };
 
 const second: Handle = async ({ event, resolve }) => {

@@ -6,49 +6,50 @@
     import BackButton from '$lib/components/BackButton.svelte';
     import { ToastStore } from '$lib/state/toasts.svelte';
     import ToastPanel from '$lib/components/ToastPanel.svelte';
+    import { removeContactPhoto, updateContact, uploadContactPhoto, validateContactForm } from '$lib/api/contacts';
 
     const toastStore = new ToastStore();
     let { data }: PageProps = $props();
-    let dataState = $state(data);
+    let dataState = $state(data.contact as ContactWithPhones);
     let photo_file = $state(null);
     let remove_photo = $state(false);
 
     async function submitForm(event: Event) {
         event.preventDefault();
-        const contactsRes = await fetch(`/api/v1/contacts/${dataState.contact.id}`, {
-            method: 'PUT',
-            body: JSON.stringify({...dataState.contact, phone_numbers: dataState.phone_numbers})
-        });
-        let secondaryRes = true;
-        if(photo_file) {
-            const photoRes = await fetch(`/api/v1/contacts/${dataState.contact.id}/photo`, {
-                method: 'POST',
-                body: photo_file
-            });
-            const data = await photoRes.json();
-            secondaryRes = photoRes.ok;
-        }
-        else if(remove_photo) {
-            const removePhotoRes = await fetch(`/api/v1/contacts/${dataState.contact.id}/photo`, {
-                method: 'DELETE'
-            });
-            const data = await removePhotoRes.json();
-            secondaryRes = removePhotoRes.ok;
+        const validation = await validateContactForm(dataState);
+        if(validation.type === 'error') {
+            toastStore.add(validation.message, 'error');
+            return;
         }
         try {
-            if(contactsRes.ok && secondaryRes) {
-                const contactsData = await contactsRes.json();
-                toastStore.add('api.contacts.contacts.update.success', 'success');
-                setTimeout(() => {
-                    window.location.href = `/contacts/${dataState.contact.id}`;
-                }, 1000);
+            const updateResult = await updateContact(dataState);
+            if(updateResult.type === 'error') {
+                toastStore.add(updateResult.message, 'error');
+                return;
             }
-            else {
-                toastStore.add('api.contacts.contacts.update.failed', 'error');
+            if(photo_file) {
+                const photoResult = await uploadContactPhoto(dataState.id, photo_file);
+                if(photoResult.type === 'error') {
+                    toastStore.add(photoResult.message, 'error');
+                    return;
+                }
             }
+            else if(remove_photo) {
+                const removePhotoResult = await removeContactPhoto(dataState.id);
+                if(removePhotoResult.type === 'error') {
+                    toastStore.add(removePhotoResult.message, 'error');
+                    return;
+                }
+            }
+            toastStore.add('api.contacts.update.success', 'success');
+            setTimeout(() => {
+                window.location.href = `/contacts/${dataState.id}`;
+            }, 1000);
         }
         catch(err) {
-            toastStore.add('api.contacts.contacts.update.failed', 'error');
+            console.error('Error updating contact:', err);
+            toastStore.add('api.contacts.update.failed', 'error');
+            return;
         }
     }
 </script>
@@ -65,6 +66,7 @@
                 bind:data={dataState}
                 bind:photo_file={photo_file}
                 bind:remove_photo={remove_photo}
+                availableTags={data.tags}
                 saveBtnLabel={'contacts.actions.save'}
             />
         </form>

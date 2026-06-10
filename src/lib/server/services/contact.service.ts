@@ -1,5 +1,7 @@
 import { contactRepository } from '../repositories/contact.repository';
+import { contactTagRepository } from '../repositories/contactTag.repository';
 import { phoneNumberRepository } from '../repositories/phoneNumber.repository';
+import { tagRepository } from '../repositories/tag.repository';
 import { photoService } from './photo.service';
 import { NotFoundError, ValidationError } from '../errors';
 
@@ -14,7 +16,12 @@ type ContactInput = {
     last_name?: string;
     notes?: string | null;
     phone_numbers?: PhoneNumberInput[];
+    tags?: Tag[];
 };
+
+function isValidPhoneNumber(phone: string): boolean {
+    return /^\+\d{3,15}$/.test((phone || '').trim());
+}
 
 async function getOwnedContact(contactId: number, userId: number): Promise<Contact> {
     if(isNaN(contactId)) {
@@ -38,6 +45,9 @@ async function syncPhoneNumbers(contactId: number, incoming: PhoneNumberInput[])
         if(!item.phone_number) {
             continue;
         }
+        if(!isValidPhoneNumber(item.phone_number)) {
+            throw new ValidationError('api.contacts.invalid_phone_number');
+        }
         if(item.id && existingIds.includes(item.id)) {
             await phoneNumberRepository.update(item.id, {
                 phone_number: item.phone_number,
@@ -60,28 +70,82 @@ async function syncPhoneNumbers(contactId: number, incoming: PhoneNumberInput[])
     }
 }
 
-export const contactService = {
-    listForUser: async (userId: number, opts: { favouritesOnly?: boolean } = {}): Promise<Contact[]> => {
-        return contactRepository.findMany({
-            userId,
-            where: opts.favouritesOnly ? { is_favourite: true } : undefined
+async function syncContactTags(contactId: number, userId: number, incoming: Tag[] = []): Promise<void> {
+    const incomingIds = [...new Set(incoming.map((tag) => tag.id).filter((id) => !isNaN(id)))];
+    const tags = await Promise.all(incomingIds.map((id) => tagRepository.findByIdAndUserId(id, userId)));
+    if(tags.some((tag) => !tag)) {
+        throw new ValidationError('api.tags.invalid_tag');
+    }
+    await contactTagRepository.replaceTags(contactId, incomingIds);
+}
+
+async function loadTagsForContacts(contacts: Contact[]): Promise<Contact[]> {
+    if(contacts.length === 0) {
+        return contacts;
+    }
+
+    const rows = await tagRepository.findByContactIds(contacts.map((contact) => contact.id));
+    const tagsByContactId = new Map<number, Tag[]>();
+
+    for(const row of rows) {
+        const current = tagsByContactId.get(row.contact_id) || [];
+        current.push({
+            id: row.id,
+            user_id: row.user_id,
+            label: row.label,
+            color: row.color
         });
+        tagsByContactId.set(row.contact_id, current);
+    }
+
+    return contacts.map((contact) => ({
+        ...contact,
+        tags: tagsByContactId.get(contact.id) || []
+    }));
+}
+
+export const contactService = {
+    listForUser: async (userId: number, opts: { favouritesOnly?: boolean; tagId?: number } = {}): Promise<Contact[]> => {
+        const contacts = await contactRepository.findMany({
+            userId,
+            where: opts.favouritesOnly ? { is_favourite: true } : undefined,
+            tagId: opts.tagId
+        });
+        return loadTagsForContacts(contacts);
     },
 
     getOwned: async (contactId: number, userId: number): Promise<Contact> => {
         return getOwnedContact(contactId, userId);
     },
 
-    getOwnedWithPhones: async (contactId: number, userId: number): Promise<{ contact: Contact; phone_numbers: PhoneNumber[] }> => {
+    getOwnedWithPhones: async (contactId: number, userId: number): Promise<ContactWithPhones> => {
         const contact = await getOwnedContact(contactId, userId);
-        const phone_numbers = await phoneNumberRepository.findByContactId(contactId);
-        return { contact, phone_numbers };
+        const [phone_numbers, tags] = await Promise.all([
+            phoneNumberRepository.findByContactId(contactId),
+            tagRepository.findByContactIds([contactId])
+        ]);
+        return {
+            ...contact,
+            phone_numbers,
+            tags: tags.map((tag) => ({
+                id: tag.id,
+                user_id: tag.user_id,
+                label: tag.label,
+                color: tag.color
+            }))
+        };
     },
 
-    create: async (userId: number, input: ContactInput): Promise<number> => {
-        const { first_name, last_name, notes, phone_numbers = [] } = input;
+    create: async (userId: number, input: CreateContactPayload): Promise<number> => {
+        const { first_name, last_name, notes, phone_numbers = [], tags = [] } = input;
         if(!first_name || !last_name) {
             throw new ValidationError('api.contacts.missing_fields');
+        }
+
+        for(const item of phone_numbers) {
+            if(item.phone_number && !isValidPhoneNumber(item.phone_number)) {
+                throw new ValidationError('api.contacts.invalid_phone_number');
+            }
         }
 
         const newId = await contactRepository.create({
@@ -101,11 +165,15 @@ export const contactService = {
             }
         }
 
+        if(tags.length > 0) {
+            await syncContactTags(newId, userId, tags);
+        }
+
         return newId;
     },
 
     update: async (contactId: number, userId: number, input: ContactInput): Promise<void> => {
-        const { first_name, last_name, notes, phone_numbers = [] } = input;
+        const { first_name, last_name, notes, phone_numbers = [], tags = [] } = input;
         if(isNaN(contactId) || !first_name || !last_name) {
             throw new ValidationError('api.contacts.missing_fields');
         }
@@ -120,6 +188,7 @@ export const contactService = {
         });
 
         await syncPhoneNumbers(contactId, phone_numbers);
+        await syncContactTags(contactId, userId, tags);
     },
 
     delete: async (contactId: number, userId: number): Promise<void> => {
