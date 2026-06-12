@@ -16,9 +16,10 @@ export async function GET({ locals }) {
 
 export async function POST({ request, locals }) {
     const user = getAuthenticatedUser(locals);
-    const body = await request.json();
+    const body = await request.formData();
+    const photoData = body.get('contact_photo') as Blob | null;
     try {
-        const contactId = await contactService.create(user.id, body);
+        const contactId = await contactService.createWithPhoto(user.id, body, photoData);
         return json(
             { message: 'api.contacts.create.success', contactId },
             { status: 201 }

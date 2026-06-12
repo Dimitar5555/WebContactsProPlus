@@ -62,21 +62,24 @@ export async function deleteContact(contactId: number): Promise<Message> {
     }
 }
 
-export async function validateContactForm(data: CreateContactPayload): Promise<Message> {
-    if(data.first_name.trim() === '' && data.last_name.trim() === '') {
+export async function validateContactForm(data: FormData): Promise<Message> {
+    const first_name = data.get('first_name') as string | null;
+    const last_name = data.get('last_name') as string | null;
+    const phone_numbers = JSON.parse(data.get('phone_numbers') as string || '[]') as { phone_number: string }[];
+    if(first_name?.trim() === '' || last_name?.trim() === '') {
         return {
             message: 'contacts.errors.name_required',
             type: 'error'
         };
     }
-    if(data.phone_numbers.some((pn) => pn.phone_number.trim() === '')) {
+    if(phone_numbers.some((pn) => pn.phone_number.trim() === '')) {
         return {
             message: 'contacts.errors.phone_number_required',
             type: 'error'
         };
     }
     const phoneRegex = /^\+\d{3,15}$/;
-    if(data.phone_numbers.some((pn) => !phoneRegex.test(pn.phone_number.trim()))) {
+    if(phone_numbers.some((pn) => !phoneRegex.test(pn.phone_number.trim()))) {
         return {
             message: 'contacts.errors.phone_number_invalid',
             type: 'error'
@@ -89,9 +92,11 @@ export async function validateContactForm(data: CreateContactPayload): Promise<M
 }
 
 export async function uploadContactPhoto(contactId: number, file: File): Promise<Message> {
+    const formData = new FormData();
+    formData.append('contact_photo', file);
     const photoRes = await fetch(`/api/v1/contacts/${contactId}/photo`, {
         method: 'POST',
-        body: file
+        body: formData
     });
     const data = await photoRes.json();
     return {
@@ -100,10 +105,10 @@ export async function uploadContactPhoto(contactId: number, file: File): Promise
     };
 }
 
-export async function updateContact(contact: ContactWithPhones): Promise<Message> {
-    const response = await fetch(`/api/v1/contacts/${contact.id}`, {
+export async function updateContact(contact: FormData): Promise<Message> {
+    const response = await fetch(`/api/v1/contacts/${contact.get('id')}`, {
         method: 'PUT',
-        body: JSON.stringify(contact)
+        body: contact
     });
     const resData = await response.json();
     return {
@@ -112,10 +117,10 @@ export async function updateContact(contact: ContactWithPhones): Promise<Message
     };
 }
 
-export async function createContact(data: CreateContactPayload): Promise<{message: Message, contactId?: number}> {
+export async function createContact(data: FormData): Promise<{message: Message, contactId?: number}> {
     const response = await fetch('/api/v1/contacts', {
         method: 'POST',
-        body: JSON.stringify(data)
+        body: data
     });
     const resData = await response.json();
     if(response.ok) {

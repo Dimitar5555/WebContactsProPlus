@@ -45,7 +45,7 @@
 
             <!-- Custom Clean File Input styling -->
             <div class="w-100 mb-3">
-                <input class="form-control form-control-sm" type="file" id="contactPhoto" name="contactPhoto" accept="image/*" onchange={async (e) => {
+                <input class="form-control form-control-sm" type="file" id="contactPhoto" name="contact_photo" accept="image/*" onchange={async (e) => {
                     const fileReader = new FileReader();
                     photo_file = (e.target as HTMLInputElement).files[0] as File;
                     if(photo_file) {
@@ -102,7 +102,7 @@
                     <label class="form-label fw-semibold text-dark small" for="lastNameInput">
                         {$_('contacts.last_name')}
                     </label>
-                    <input class="form-control px-3 py-2" type="text" name="first_name" id="lastNameInput" required bind:value={contact.last_name} />
+                    <input class="form-control px-3 py-2" type="text" name="last_name" id="lastNameInput" required bind:value={contact.last_name} />
                 </div>
             </div>
 

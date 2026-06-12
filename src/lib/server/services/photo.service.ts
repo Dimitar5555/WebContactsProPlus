@@ -42,7 +42,7 @@ function ensureUploadDir(): void {
     }
 }
 
-async function persistFile(blob: Blob): Promise<string> {
+export async function persistFile(blob: Blob): Promise<string> {
     ensureUploadDir();
     const ext = MIME_TO_EXT[blob.type];
     
@@ -104,6 +104,19 @@ async function fetchOwnedContact(contactId: number, userId: number): Promise<Con
     return contact;
 }
 
+export function validatePhotoBlob(blob: Blob): Boolean {
+    if(!blob) {
+        throw new ValidationError('api.photo.no_file_uploaded');
+    }
+    if(!ALLOWED_MIME_TYPES.includes(blob.type)) {
+        throw new ValidationError('api.photo.invalid_file_type');
+    }
+    if(blob.size > UPLOADS_LIMIT_BYTES) {
+        throw new ValidationError('api.photo.file_too_large');
+    }
+    return true;
+}
+
 export const photoService = {
     init: ensureUploadDir,
 
@@ -112,15 +125,7 @@ export const photoService = {
     deletePhotoFiles: removePhotoFiles,
 
     attachToContact: async (contactId: number, userId: number, blob: Blob): Promise<string> => {
-        if(!blob) {
-            throw new ValidationError('api.photo.no_file_uploaded');
-        }
-        if(!ALLOWED_MIME_TYPES.includes(blob.type)) {
-            throw new ValidationError('api.photo.invalid_file_type');
-        }
-        if(blob.size > UPLOADS_LIMIT_BYTES) {
-            throw new ValidationError('api.photo.file_too_large');
-        }
+        validatePhotoBlob(blob);
 
         const contact = await fetchOwnedContact(contactId, userId);
         const fileName = await persistFile(blob);

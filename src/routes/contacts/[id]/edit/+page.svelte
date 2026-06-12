@@ -16,26 +16,28 @@
 
     async function submitForm(event: Event) {
         event.preventDefault();
-        const validation = await validateContactForm(dataState);
+        const formData = new FormData(event.target as HTMLFormElement);
+        formData.set('id', String(dataState.id));
+        const validation = await validateContactForm(formData);
         if(validation.type === 'error') {
             toastStore.add(validation.message, 'error');
             return;
         }
         try {
-            const updateResult = await updateContact(dataState);
+            const updateResult = await updateContact(formData);
             if(updateResult.type === 'error') {
                 toastStore.add(updateResult.message, 'error');
                 return;
             }
             if(photo_file) {
-                const photoResult = await uploadContactPhoto(dataState.id, photo_file);
+                const photoResult = await uploadContactPhoto(formData.get('id') as number, photo_file);
                 if(photoResult.type === 'error') {
                     toastStore.add(photoResult.message, 'error');
                     return;
                 }
             }
             else if(remove_photo) {
-                const removePhotoResult = await removeContactPhoto(dataState.id);
+                const removePhotoResult = await removeContactPhoto(formData.get('id') as number);
                 if(removePhotoResult.type === 'error') {
                     toastStore.add(removePhotoResult.message, 'error');
                     return;

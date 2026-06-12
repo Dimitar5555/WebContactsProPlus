@@ -20,23 +20,17 @@
 
     async function handleSubmit(event: Event) {
         event.preventDefault();
-        const validation = await validateContactForm(dataState);
+        const formData = new FormData(event.target as HTMLFormElement);
+        const validation = await validateContactForm(formData);
         if(validation.type === 'error') {
             toastStore.add(validation.message, 'error');
             return;
         }
         try {
-            const createResult = await createContact(dataState);
+            const createResult = await createContact(formData);
             if(createResult.message.type === 'error' || !createResult.contactId) {
                 toastStore.add(createResult.message.message, 'error');
                 return;
-            }
-            if(photo_file) {
-                const photoResult = await uploadContactPhoto(createResult.contactId, photo_file);
-                if(photoResult.type === 'error') {
-                    toastStore.add(photoResult.message, 'error');
-                    return;
-                }
             }
             toastStore.add(createResult.message.message, 'success');
             setTimeout(() => {

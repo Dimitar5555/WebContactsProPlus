@@ -16,7 +16,7 @@ export async function GET({ params, locals }) {
 
 export async function PUT({ params, request, locals }: any) {
     const user = getAuthenticatedUser(locals);
-    const body = await request.json();
+    const body = await request.formData();
     try {
         await contactService.update(Number(params.id), user.id, body);
         return json({ message: 'api.contacts.update.success' }, { status: 200 });
